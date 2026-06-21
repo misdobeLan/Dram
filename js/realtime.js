@@ -90,16 +90,17 @@
 
     function applyQuotes(quotes) {
         quotes.forEach(q => {
-            updateETFCard(q);
-            // 根据富途代码反向查找原始 ticker
-            const holding = window.holdings?.find(h =>
-                h.futu_code && h.futu_code.toUpperCase() === q.code.toUpperCase()
-            );
+            // 根据富途代码或原始 ticker 反向查找持仓
+            const holding = window.holdings?.find(h => {
+                const futuMatch = h.futu_code && h.futu_code.toUpperCase() === q.code.toUpperCase();
+                const tickerMatch = h.ticker.toUpperCase() === q.code.toUpperCase();
+                return futuMatch || tickerMatch;
+            });
             if (holding) {
                 updateHolding(holding.ticker, q);
             }
-            // ETF 兜底
-            if (q.code.includes('DRAM')) {
+            // ETF 兜底（富途代码或 Yahoo 代码）
+            if (q.code.includes('DRAM') || q.code === 'DRAM') {
                 updateETFCard(q);
             }
         });
@@ -158,7 +159,8 @@
         if (!window.holdings) return;
         window.holdings.forEach(h => {
             if (h.ticker === 'DRAM') return;
-            if (!h.futu_code) {
+            const hasSource = h.futu_code || h.yahoo_code;
+            if (!hasSource) {
                 // 表格
                 document.querySelectorAll(`[data-ticker="${h.ticker}"] .rt-price`).forEach(el => {
                     el.textContent = '未开通';

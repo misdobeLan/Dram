@@ -49,3 +49,13 @@ def test_kline_requires_connection(backend_server):
     assert data["code"] == "US.MU"
     assert data["ktype"] == "1d"
     assert isinstance(data["records"], list)
+
+
+def test_korean_search_endpoint(backend_server):
+    """/api/korean/search 应返回韩国股票搜索结果。"""
+    url = f"{backend_server}/api/korean/search?q=005930&bas_dd=20250619"
+    data = _get_json(url)
+    assert data["query"] == "005930"
+    assert data["count"] > 0
+    codes = {item.get("code") for item in data["items"]}
+    assert "005930" in codes

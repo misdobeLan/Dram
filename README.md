@@ -10,7 +10,7 @@
 - **走势图表**：基于真实 K 线的净值走势（支持 ALL / 1M / 2W 时间范围切换）
 - **市场资讯**：汇总 Morningstar、Barron's、AOL/Yahoo Finance 与官方报道
 - **响应式设计**：适配桌面端与移动端
-- **实时行情**：通过富途 OpenAPI 接入真实行情数据
+- **实时行情**：通过富途 OpenAPI + Yahoo Finance 回退接入真实行情数据，韩国股票额外集成 k-skill 作为辅助校验
 
 ## 快速开始
 
@@ -24,7 +24,7 @@ python -m venv .venv
 
 ### 2. 启动 OpenD 网关
 
-实时行情依赖本地 OpenD 网关（默认 `127.0.0.1:11111`）。
+实时行情优先使用富途 OpenD（默认 `127.0.0.1:11111`）。
 
 #### 方式 A：使用项目内置网关（FUTU-OpenD-rs）
 
@@ -68,40 +68,51 @@ start_server.bat
 run_tests.bat
 ```
 
-测试会自动比对页面展示数据与富途真实行情。若发现差异，会输出具体字段；你需要修正后重新运行，直到全部通过。
+测试会自动比对页面展示数据与真实行情。若发现差异，会输出具体字段；你需要修正后重新运行，直到全部通过。
 
 ## 当前测试结果
 
 ```bash
 pytest tests -v
-# 6 passed in ~14s
+# 18 passed in ~25s
 ```
 
-- ✅ `test_health`：后端健康检查
-- ✅ `test_holdings`：持仓代码映射
-- ✅ `test_quote_requires_connection`：行情接口
-- ✅ `test_kline_requires_connection`：K 线接口
-- ✅ `test_page_etf_price_matches_real`：页面 DRAM 价格/涨跌幅与真实行情一致
-- ✅ `test_page_holdings_match_real`：页面持仓价格/涨跌幅与真实行情一致
+| 测试 | 状态 | 说明 |
+|------|------|------|
+| `test_health` | ✅ 通过 | 后端 OpenD 连接正常 |
+| `test_holdings` | ✅ 通过 | 持仓代码映射正确 |
+| `test_quote_requires_connection` | ✅ 通过 | 行情接口可用 |
+| `test_kline_requires_connection` | ✅ 通过 | K 线接口可用 |
+| `test_korean_search_endpoint` | ✅ 通过 | k-skill 搜索接口可用 |
+| `test_korean_holdings_use_supported_futu_markets` | ✅ 通过 | 韩国持仓使用富途支持的市场前缀 |
+| `test_no_kr_market_prefix_in_korean_holdings` | ✅ 通过 | 韩国持仓不使用 KR 前缀 |
+| `test_korean_holdings_use_correct_us_otc_tickers` | ✅ 通过 | 韩国持仓配置美股场外代码 |
+| `test_search_stock_finds_*` | ✅ 通过 | k-skill 搜索返回正确韩国代码 |
+| `test_fetch_korean_quote_gracefully_fails_on_upstream_error` | ✅ 通过 | k-skill 行情异常时系统不崩溃 |
+| `test_fetch_quote_falls_back_to_yahoo_when_k_skill_fails` | ✅ 通过 | k-skill 失败时回退 Yahoo |
+| `test_korean_holding_has_fallback_quote` | ✅ 通过 | 韩国持仓通过回退拿到行情 |
+| `test_yahoo_quote_alone_works_for_korean_tickers` | ✅ 通过 | Yahoo 可直接提供韩国股票行情 |
+| `test_page_etf_price_matches_real` | ✅ 通过 | 页面 DRAM 价格/涨跌幅与真实行情一致 |
+| `test_page_holdings_match_real` | ✅ 通过 | 页面持仓价格/涨跌幅与真实行情一致 |
 
 ## 实时行情覆盖范围
 
 当前 OpenD 账号可获取以下市场真实行情：
 
-| 公司 | 代码 | 市场 | 状态 |
-|------|------|------|------|
-| Roundhill Memory ETF | DRAM | US | ✅ 实时 |
-| Micron Technology | MU | US | ✅ 实时 |
-| SanDisk | SNDK | US | ✅ 实时 |
-| Seagate Technology | STX | US | ✅ 实时 |
-| Western Digital | WDC | US | ✅ 实时 |
-| SK Hynix | 000660.KS | Korea | ❌ 账号/市场不支持，显示 "—" |
-| Samsung Electronics | 005930.KS | Korea | ❌ 账号/市场不支持，显示 "—" |
-| Kioxia Holdings | 285A / KI5.SG | Japan / Singapore | ❌ 账号/市场不支持，显示 "—" |
-| Nanya Technology | 2408.TW | Taiwan | ❌ 账号/市场不支持，显示 "—" |
-| Winbond Electronics | 2344.TW | Taiwan | ❌ 账号/市场不支持，显示 "—" |
+| 公司 | 代码 | 市场 | 数据源 | 状态 |
+|------|------|------|--------|------|
+| Roundhill Memory ETF | DRAM | US | 富途 | ✅ 实时 |
+| Micron Technology | MU | US | 富途 | ✅ 实时 |
+| SanDisk | SNDK | US | 富途 | ✅ 实时 |
+| Seagate Technology | STX | US | 富途 | ✅ 实时 |
+| Western Digital | WDC | US | 富途 | ✅ 实时 |
+| SK hynix | 000660.KS | Korea | Yahoo Finance | ✅ 实时 |
+| Samsung Electronics | 005930.KS | Korea | Yahoo Finance | ✅ 实时 |
+| Nanya Technology | 2408.TW | Taiwan | Yahoo Finance | ✅ 实时 |
+| Winbond Electronics | 2344.TW | Taiwan | Yahoo Finance | ✅ 实时 |
+| Kioxia Holdings | 285A / KI5.SG | Japan / Singapore | — | ❌ 暂无数据源 |
 
-> 若你的富途账号开通了韩股/台股/新加坡行情权限，修改 `backend/config.py` 中的 `futu_codes` 列表即可自动解析。
+> 富途对韩股、台股、新加坡部分市场无行情权限，因此使用 Yahoo Finance 作为回退数据源。Kioxia 因公开代码难以匹配，暂显示「未开通」。
 
 ## 项目结构
 
@@ -110,6 +121,8 @@ pytest tests -v
 │   ├── main.py
 │   ├── config.py
 │   ├── futu_client.py
+│   ├── fallback_client.py    # k-skill + Yahoo Finance 回退
+│   ├── k_skill_client.py     # Korean Stock Search 代理客户端
 │   ├── models.py
 │   ├── opend_helper.py
 │   ├── check_futu.py
@@ -117,6 +130,8 @@ pytest tests -v
 ├── tests/                    # Playwright 数据一致性测试
 │   ├── conftest.py
 │   ├── test_api.py
+│   ├── test_futu_code_markets.py
+│   ├── test_k_skill.py
 │   └── test_page_vs_real.py
 ├── tools/                    # 项目内置工具
 │   └── futu-opend-rs-*/      # FUTU-OpenD-rs 网关
@@ -132,7 +147,9 @@ pytest tests -v
 
 ## 数据来源
 
-- 实时行情：[富途 OpenAPI](https://www.futunn.com/OpenAPI)
+- 实时行情（美股/ETF）：[富途 OpenAPI](https://www.futunn.com/OpenAPI)
+- 实时行情（韩股/台股）：[Yahoo Finance](https://finance.yahoo.com/)
+- 韩国股票代码/名称辅助校验：[k-skill-proxy](https://k-skill-proxy.nomadamas.org/v1/korean-stock)
 - 持仓权重与 ETF 信息：[Roundhill Investments - DRAM](https://www.roundhillinvestments.com/etf/dram/)
 - 市场资讯：Morningstar、Barron's、AOL/Yahoo Finance 等公开财经媒体
 

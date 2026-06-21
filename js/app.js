@@ -1,23 +1,11 @@
-// DRAM ETF 监控数据
+// DRAM ETF 监控数据（来源：Roundhill Investments 官网，As of 06/21/2026）
 const holdings = [
     {
         rank: 1,
-        name: 'SK Hynix',
-        ticker: '000660.KS',
-        market: 'Korea',
-        weight: 28.2,
-        description: '全球 HBM 与 DRAM 龙头，NVIDIA AI 芯片 HBM 核心供应商。',
-        segment: 'HBM / DRAM',
-        change: 0.0,
-        color: '#00f0ff',
-        futu_code: null
-    },
-    {
-        rank: 2,
-        name: 'Micron Technology',
+        name: 'Micron Technology Inc',
         ticker: 'MU',
         market: 'US',
-        weight: 24.9,
+        weight: 27.57,
         description: '美国最大记忆体制造商，覆盖 DRAM、NAND 与 HBM 产品线。',
         segment: 'DRAM / NAND / HBM',
         change: 0.0,
@@ -25,11 +13,23 @@ const holdings = [
         futu_code: null
     },
     {
+        rank: 2,
+        name: 'SK hynix',
+        ticker: '000660.KS',
+        market: 'Korea',
+        weight: 26.87,
+        description: '全球 HBM 与 DRAM 龙头，NVIDIA AI 芯片 HBM 核心供应商。',
+        segment: 'HBM / DRAM',
+        change: 0.0,
+        color: '#00f0ff',
+        futu_code: null
+    },
+    {
         rank: 3,
-        name: 'Samsung Electronics',
+        name: 'Samsung Electronics Co',
         ticker: '005930.KS',
         market: 'Korea',
-        weight: 20.9,
+        weight: 17.64,
         description: '全球最大记忆体厂商，积极推进 HBM4 与 NVIDIA 认证。',
         segment: 'DRAM / NAND / HBM',
         change: 0.0,
@@ -41,7 +41,7 @@ const holdings = [
         name: 'Kioxia Holdings',
         ticker: '285A / KI5.SG',
         market: 'Japan / Singapore',
-        weight: 6.5,
+        weight: 8.00,
         description: 'NAND 闪存巨头，由东芝记忆体业务重组而来。',
         segment: 'NAND Flash',
         change: 0.0,
@@ -50,10 +50,10 @@ const holdings = [
     },
     {
         rank: 5,
-        name: 'SanDisk',
+        name: 'Sandisk',
         ticker: 'SNDK',
         market: 'US',
-        weight: 5.1,
+        weight: 5.52,
         description: '分拆自 Western Digital，专注 NAND 与消费级存储。',
         segment: 'NAND / SSD',
         change: 0.0,
@@ -62,22 +62,10 @@ const holdings = [
     },
     {
         rank: 6,
-        name: 'Seagate Technology',
-        ticker: 'STX',
-        market: 'US / Ireland',
-        weight: 4.4,
-        description: '全球 HDD 龙头，积极布局 AI 数据中心海量冷存储。',
-        segment: 'HDD',
-        change: 0.0,
-        color: '#a855f7',
-        futu_code: null
-    },
-    {
-        rank: 7,
         name: 'Western Digital',
         ticker: 'WDC',
         market: 'US',
-        weight: 4.0,
+        weight: 4.36,
         description: '硬盘与 NAND 存储解决方案供应商。',
         segment: 'HDD / NAND',
         change: 0.0,
@@ -85,11 +73,23 @@ const holdings = [
         futu_code: null
     },
     {
+        rank: 7,
+        name: 'Seagate Technology Holdings',
+        ticker: 'STX',
+        market: 'US / Ireland',
+        weight: 4.27,
+        description: '全球 HDD 龙头，积极布局 AI 数据中心海量冷存储。',
+        segment: 'HDD',
+        change: 0.0,
+        color: '#a855f7',
+        futu_code: null
+    },
+    {
         rank: 8,
         name: 'Nanya Technology',
         ticker: '2408.TW',
         market: 'Taiwan',
-        weight: 3.3,
+        weight: 3.27,
         description: '台湾 DRAM 制造商，专注利基型记忆体市场。',
         segment: 'DRAM',
         change: 0.0,
@@ -101,12 +101,38 @@ const holdings = [
         name: 'Winbond Electronics',
         ticker: '2344.TW',
         market: 'Taiwan',
-        weight: 2.1,
+        weight: 2.08,
         description: '利基型 DRAM、NOR Flash 与行动记忆体供应商。',
         segment: 'Specialty Memory',
         change: 0.0,
         color: '#6366f1',
         futu_code: null
+    },
+    {
+        rank: 10,
+        name: 'SOUTH KOREA',
+        ticker: 'KRW',
+        market: 'Cash',
+        weight: 0.00,
+        description: '韩元现金部位。',
+        segment: 'Cash',
+        change: 0.0,
+        color: '#8b9ab0',
+        futu_code: null,
+        is_cash: true
+    },
+    {
+        rank: 11,
+        name: 'NEW TAIWAN',
+        ticker: 'TWD',
+        market: 'Cash',
+        weight: 0.00,
+        description: '新台币现金部位。',
+        segment: 'Cash',
+        change: 0.0,
+        color: '#8b9ab0',
+        futu_code: null,
+        is_cash: true
     }
 ];
 
@@ -190,10 +216,10 @@ function renderHoldingsTable() {
     `).join('');
 }
 
-// 渲染持仓卡片
+// 渲染持仓卡片（排除现金部位）
 function renderHoldingCards() {
     const container = document.getElementById('holding-cards');
-    container.innerHTML = holdings.map(h => `
+    container.innerHTML = holdings.filter(h => !h.is_cash).map(h => `
         <div class="holding-card" data-card-ticker="${h.ticker}">
             <div class="flex items-start justify-between mb-4">
                 <div>
@@ -287,18 +313,20 @@ async function loadHoldingsConfig() {
                 const local = holdings.find(lh => lh.ticker === h.ticker);
                 if (local) {
                     local.futu_code = h.futu_code;
+                    local.yahoo_code = h.yahoo_code;
                 }
             });
         }
-        if (data.etf_code) {
+        if (data.etf_code || data.etf_yahoo) {
             const etfHolding = holdings.find(h => h.ticker === 'DRAM');
             if (etfHolding) {
                 etfHolding.futu_code = data.etf_code;
+                etfHolding.yahoo_code = data.etf_yahoo;
             } else {
                 holdings.unshift({
                     rank: 0, name: 'Roundhill Memory ETF', ticker: 'DRAM',
                     market: 'US', weight: 0, description: '', segment: 'ETF',
-                    change: 0, color: '#00f0ff', futu_code: data.etf_code
+                    change: 0, color: '#00f0ff', futu_code: data.etf_code, yahoo_code: data.etf_yahoo
                 });
             }
         }
