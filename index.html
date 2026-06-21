@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DRAM Tracker | Roundhill Memory ETF 监控台</title>
+    <meta name="description" content="美股 DRAM ETF 实时监控网站，追踪 Roundhill Memory ETF 持仓、权重、行情与资讯。">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Syne:wght@400;700;800&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-dram-dark text-dram-text font-body antialiased">
+    <!-- 背景网格与光晕 -->
+    <div class="fixed inset-0 z-0 pointer-events-none">
+        <div class="absolute inset-0 grid-overlay opacity-30"></div>
+        <div class="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-dram-cyan/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-dram-green/10 rounded-full blur-[120px]"></div>
+    </div>
+
+    <!-- 导航 -->
+    <nav class="fixed top-0 left-0 right-0 z-50 border-b border-white/10 bg-dram-dark/80 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+            <a href="#" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-dram-cyan to-dram-blue flex items-center justify-center shadow-[0_0_20px_rgba(0,240,255,0.3)] group-hover:shadow-[0_0_30px_rgba(0,240,255,0.5)] transition-shadow">
+                    <span class="font-display font-bold text-black text-lg">D</span>
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-display font-bold text-lg leading-none tracking-tight">DRAM Tracker</span>
+                    <span class="text-[10px] text-dram-muted font-mono tracking-widest uppercase">Roundhill Memory ETF</span>
+                </div>
+            </a>
+            <div class="hidden md:flex items-center gap-8 text-sm font-medium">
+                <a href="#overview" class="nav-link">概览</a>
+                <a href="#holdings" class="nav-link">持仓</a>
+                <a href="#chart" class="nav-link">走势</a>
+                <a href="#news" class="nav-link">资讯</a>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10">
+                    <span class="w-2 h-2 rounded-full bg-dram-green animate-pulse"></span>
+                    <span class="text-xs font-mono text-dram-muted">MARKET OPEN</span>
+                </div>
+                <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg hover:bg-white/10 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 移动端菜单 -->
+    <div id="mobile-menu" class="fixed inset-0 z-40 bg-dram-dark/95 backdrop-blur-xl transform translate-x-full transition-transform duration-300 md:hidden pt-20 px-6">
+        <div class="flex flex-col gap-6 text-2xl font-display font-bold">
+            <a href="#overview" class="mobile-nav-link">概览</a>
+            <a href="#holdings" class="mobile-nav-link">持仓</a>
+            <a href="#chart" class="mobile-nav-link">走势</a>
+            <a href="#news" class="mobile-nav-link">资讯</a>
+        </div>
+    </div>
+
+    <main class="relative z-10 pt-24 pb-20">
+        <!-- Hero -->
+        <section id="overview" class="max-w-7xl mx-auto px-6 mb-20">
+            <div class="grid lg:grid-cols-12 gap-8 items-start">
+                <div class="lg:col-span-7 space-y-6">
+                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-dram-cyan/10 border border-dram-cyan/30 text-dram-cyan text-xs font-mono tracking-wider">
+                        <span class="w-1.5 h-1.5 rounded-full bg-dram-cyan animate-pulse"></span>
+                        全球首支纯记忆体 ETF
+                    </div>
+                    <h1 class="font-display font-extrabold text-5xl md:text-7xl leading-[0.95] tracking-tight">
+                        追踪 <span class="text-transparent bg-clip-text bg-gradient-to-r from-dram-cyan via-dram-blue to-dram-green">AI 记忆体</span><br>
+                        超级周期
+                    </h1>
+                    <p class="text-lg md:text-xl text-dram-muted max-w-2xl leading-relaxed">
+                        Roundhill Memory ETF（DRAM）是首支专注于全球记忆体与储存半导体公司的主动型 ETF。从 HBM、DRAM、NAND 到 HDD，一站式监控 AI 基建最关键瓶颈资产。
+                    </p>
+                    <div class="flex flex-wrap gap-4 pt-4">
+                        <a href="#holdings" class="px-8 py-4 rounded-xl bg-gradient-to-r from-dram-cyan to-dram-blue text-black font-bold font-display tracking-tight hover:shadow-[0_0_30px_rgba(0,240,255,0.4)] transition-all transform hover:-translate-y-0.5">
+                            查看持仓
+                        </a>
+                        <a href="https://www.roundhillinvestments.com/etf/dram/" target="_blank" rel="noopener noreferrer" class="px-8 py-4 rounded-xl bg-white/5 border border-white/20 font-bold font-display tracking-tight hover:bg-white/10 transition-all">
+                            官网资料 ↗
+                        </a>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-5 space-y-4">
+                    <div class="glass-card rounded-2xl p-6 md:p-8 border border-dram-cyan/20 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-dram-cyan/10 rounded-full blur-[60px]"></div>
+                        <div class="relative">
+                            <div class="flex items-center justify-between mb-6">
+                                <div>
+                                    <p class="text-dram-muted text-sm font-mono mb-1">DRAM / Cboe BZX</p>
+                                    <h2 class="font-display font-bold text-3xl">Roundhill Memory ETF</h2>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-dram-muted text-xs font-mono mb-1">LAUNCH</p>
+                                    <p class="font-mono font-bold text-dram-cyan">2026.04.02</p>
+                                </div>
+                            </div>
+                            <div class="flex items-baseline gap-3 mb-2">
+                                <span class="font-mono font-bold text-5xl md:text-6xl" id="etf-price">$47.85</span>
+                                <span class="px-2.5 py-1 rounded-lg bg-dram-green/15 text-dram-green font-mono font-bold text-sm" id="etf-change">+3.24%</span>
+                            </div>
+                            <p class="text-dram-muted text-sm font-mono mb-8">实时价格（模拟延迟 15 分钟）</p>
+                            
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="p-4 rounded-xl bg-white/5 border border-white/10">
+                                    <p class="text-dram-muted text-xs font-mono mb-1">AUM</p>
+                                    <p class="font-mono font-bold text-xl">~$10.0B</p>
+                                </div>
+                                <div class="p-4 rounded-xl bg-white/5 border border-white/10">
+                                    <p class="text-dram-muted text-xs font-mono mb-1">EXPENSE RATIO</p>
+                                    <p class="font-mono font-bold text-xl">0.65%</p>
+                                </div>
+                                <div class="p-4 rounded-xl bg-white/5 border border-white/10">
+                                    <p class="text-dram-muted text-xs font-mono mb-1">HOLDINGS</p>
+                                    <p class="font-mono font-bold text-xl">9–11</p>
+                                </div>
+                                <div class="p-4 rounded-xl bg-white/5 border border-white/10">
+                                    <p class="text-dram-muted text-xs font-mono mb-1">STYLE</p>
+                                    <p class="font-mono font-bold text-xl">Active</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 关键指标 -->
+        <section class="max-w-7xl mx-auto px-6 mb-20">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="metric-card group">
+                    <div class="flex items-center justify-between mb-4">
+                        <p class="text-dram-muted text-sm font-mono">INCEP. RETURN</p>
+                        <span class="text-dram-green">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                        </span>
+                    </div>
+                    <p class="font-mono font-bold text-4xl text-dram-green">+77.9%</p>
+                    <p class="text-dram-muted text-sm mt-2">自 2026/04/02 成立至 05/15</p>
+                </div>
+                <div class="metric-card group">
+                    <div class="flex items-center justify-between mb-4">
+                        <p class="text-dram-muted text-sm font-mono">TOP 3 CONCENTRATION</p>
+                        <span class="text-dram-cyan">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                        </span>
+                    </div>
+                    <p class="font-mono font-bold text-4xl text-dram-cyan">74%+</p>
+                    <p class="text-dram-muted text-sm mt-2">SK Hynix + Micron + Samsung</p>
+                </div>
+                <div class="metric-card group">
+                    <div class="flex items-center justify-between mb-4">
+                        <p class="text-dram-muted text-sm font-mono">INFLOW (45D)</p>
+                        <span class="text-dram-blue">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </span>
+                    </div>
+                    <p class="font-mono font-bold text-4xl text-dram-blue">~$8.7B</p>
+                    <p class="text-dram-muted text-sm mt-2">史上最快 ETF 资产增长之一</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 持仓 -->
+        <section id="holdings" class="max-w-7xl mx-auto px-6 mb-20">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
+                <div>
+                    <p class="text-dram-cyan font-mono text-sm tracking-widest mb-2">PORTFOLIO</p>
+                    <h2 class="font-display font-bold text-4xl">核心持仓</h2>
+                </div>
+                <p class="text-dram-muted text-sm max-w-md">
+                    权重计算包含直接持股与总收益互换（TRS）仓位，数据截至 2026 年 5 月，实际配置可能随时调整。
+                </p>
+            </div>
+
+            <div class="grid lg:grid-cols-12 gap-8">
+                <!-- 图表 -->
+                <div class="lg:col-span-5">
+                    <div class="glass-card rounded-2xl p-6 border border-white/10 h-full">
+                        <h3 class="font-display font-bold text-lg mb-6">持仓权重分布</h3>
+                        <div class="relative aspect-square max-w-md mx-auto">
+                            <canvas id="holdingsChart"></canvas>
+                            <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                <div class="text-center">
+                                    <p class="text-dram-muted text-xs font-mono">HOLDINGS</p>
+                                    <p class="font-display font-bold text-3xl">9</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 表格 -->
+                <div class="lg:col-span-7">
+                    <div class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="border-b border-white/10 bg-white/5">
+                                        <th class="text-left py-4 px-6 text-xs font-mono text-dram-muted tracking-wider">#</th>
+                                        <th class="text-left py-4 px-4 text-xs font-mono text-dram-muted tracking-wider">公司</th>
+                                        <th class="text-left py-4 px-4 text-xs font-mono text-dram-muted tracking-wider">代码</th>
+                                        <th class="text-left py-4 px-4 text-xs font-mono text-dram-muted tracking-wider">市场</th>
+                                        <th class="text-right py-4 px-4 text-xs font-mono text-dram-muted tracking-wider">权重</th>
+                                        <th class="text-right py-4 px-6 text-xs font-mono text-dram-muted tracking-wider">趋势</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="holdings-table-body">
+                                    <!-- JS 生成 -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 标的卡片 -->
+            <div class="mt-10 grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="holding-cards">
+                <!-- JS 生成 -->
+            </div>
+        </section>
+
+        <!-- 走势图 -->
+        <section id="chart" class="max-w-7xl mx-auto px-6 mb-20">
+            <div class="mb-10">
+                <p class="text-dram-cyan font-mono text-sm tracking-widest mb-2">PERFORMANCE</p>
+                <h2 class="font-display font-bold text-4xl">净值走势</h2>
+            </div>
+            <div class="glass-card rounded-2xl p-6 md:p-8 border border-white/10">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                    <div>
+                        <p class="font-mono text-sm text-dram-muted">DRAM 成立以来价格走势（模拟）</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button class="time-filter px-4 py-1.5 rounded-lg text-xs font-mono bg-dram-cyan/20 text-dram-cyan border border-dram-cyan/30 active" data-range="all">ALL</button>
+                        <button class="time-filter px-4 py-1.5 rounded-lg text-xs font-mono bg-white/5 text-dram-muted border border-white/10 hover:bg-white/10" data-range="1m">1M</button>
+                        <button class="time-filter px-4 py-1.5 rounded-lg text-xs font-mono bg-white/5 text-dram-muted border border-white/10 hover:bg-white/10" data-range="2w">2W</button>
+                    </div>
+                </div>
+                <div class="relative h-[360px] w-full">
+                    <canvas id="priceChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- 资讯 -->
+        <section id="news" class="max-w-7xl mx-auto px-6 mb-20">
+            <div class="mb-10">
+                <p class="text-dram-cyan font-mono text-sm tracking-widest mb-2">INTELLIGENCE</p>
+                <h2 class="font-display font-bold text-4xl">市场资讯</h2>
+            </div>
+            <div class="grid md:grid-cols-2 gap-6" id="news-grid">
+                <!-- JS 生成 -->
+            </div>
+        </section>
+
+        <!-- 风险说明 -->
+        <section class="max-w-7xl mx-auto px-6">
+            <div class="rounded-2xl border border-dram-red/20 bg-dram-red/5 p-6 md:p-8">
+                <div class="flex items-start gap-4">
+                    <div class="p-2 rounded-lg bg-dram-red/15 text-dram-red shrink-0">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    </div>
+                    <div>
+                        <h3 class="font-display font-bold text-lg mb-2">投资风险提示</h3>
+                        <p class="text-dram-muted text-sm leading-relaxed">
+                            DRAM 持仓高度集中，前三大持仓占比超过 74%，价格波动可能显著放大。记忆体半导体具有周期性特征，受 AI 资本开支、存储器供需与价格影响较大。本网站数据仅供信息参考，不构成投资建议。过往业绩不代表未来表现，投资前请仔细阅读基金招募说明书并咨询专业顾问。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="relative z-10 border-t border-white/10 bg-black/30 py-12">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-dram-cyan to-dram-blue flex items-center justify-center">
+                        <span class="font-display font-bold text-black text-sm">D</span>
+                    </div>
+                    <span class="font-display font-bold">DRAM Tracker</span>
+                </div>
+                <p class="text-dram-muted text-sm text-center md:text-right">
+                    数据来源：Roundhill Investments、Morningstar、公开资讯。<br>
+                    © 2026 DRAM Tracker. 非官方工具，与 Roundhill Investments 无关联。
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

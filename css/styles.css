@@ -1,0 +1,311 @@
+:root {
+    --dram-dark: #05070a;
+    --dram-panel: #0c1220;
+    --dram-cyan: #00f0ff;
+    --dram-blue: #2d7dff;
+    --dram-green: #00ff9d;
+    --dram-red: #ff4d6d;
+    --dram-text: #e8eef7;
+    --dram-muted: #8b9ab0;
+    --dram-border: rgba(255, 255, 255, 0.08);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background-color: var(--dram-dark);
+    color: var(--dram-text);
+    font-family: 'Noto Sans SC', sans-serif;
+    overflow-x: hidden;
+}
+
+.font-display {
+    font-family: 'Syne', sans-serif;
+}
+
+.font-mono {
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.font-body {
+    font-family: 'Noto Sans SC', 'Syne', sans-serif;
+}
+
+.bg-dram-dark {
+    background-color: var(--dram-dark);
+}
+
+.text-dram-cyan {
+    color: var(--dram-cyan);
+}
+
+.text-dram-green {
+    color: var(--dram-green);
+}
+
+.text-dram-blue {
+    color: var(--dram-blue);
+}
+
+.text-dram-red {
+    color: var(--dram-red);
+}
+
+.text-dram-muted {
+    color: var(--dram-muted);
+}
+
+.border-dram-cyan/20 {
+    border-color: rgba(0, 240, 255, 0.2);
+}
+
+.border-dram-cyan/30 {
+    border-color: rgba(0, 240, 255, 0.3);
+}
+
+.bg-dram-cyan/10 {
+    background-color: rgba(0, 240, 255, 0.1);
+}
+
+.bg-dram-cyan/20 {
+    background-color: rgba(0, 240, 255, 0.2);
+}
+
+.bg-dram-green/10 {
+    background-color: rgba(0, 255, 157, 0.1);
+}
+
+.bg-dram-green/15 {
+    background-color: rgba(0, 255, 157, 0.15);
+}
+
+.bg-dram-red/5 {
+    background-color: rgba(255, 77, 109, 0.05);
+}
+
+.bg-dram-red/15 {
+    background-color: rgba(255, 77, 109, 0.15);
+}
+
+.grid-overlay {
+    background-image: 
+        linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+    -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+}
+
+.glass-card {
+    background: rgba(12, 18, 32, 0.6);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--dram-border);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.nav-link {
+    position: relative;
+    color: var(--dram-muted);
+    transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+    color: var(--dram-text);
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--dram-cyan);
+    transition: width 0.3s ease;
+    box-shadow: 0 0 10px var(--dram-cyan);
+}
+
+.nav-link:hover::after {
+    width: 100%;
+}
+
+.metric-card {
+    padding: 1.5rem;
+    border-radius: 1rem;
+    background: rgba(12, 18, 32, 0.5);
+    border: 1px solid var(--dram-border);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.metric-card:hover {
+    border-color: rgba(0, 240, 255, 0.2);
+    box-shadow: 0 0 30px rgba(0, 240, 255, 0.08);
+    transform: translateY(-2px);
+}
+
+/* 表格样式 */
+tbody tr {
+    border-bottom: 1px solid var(--dram-border);
+    transition: background 0.2s ease;
+}
+
+tbody tr:last-child {
+    border-bottom: none;
+}
+
+tbody tr:hover {
+    background: rgba(0, 240, 255, 0.04);
+}
+
+.holding-row td {
+    padding: 1rem 0.75rem;
+}
+
+.holding-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+}
+
+.holding-ticker {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.875rem;
+    color: var(--dram-cyan);
+}
+
+.weight-bar {
+    height: 6px;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--dram-cyan), var(--dram-blue));
+    box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+}
+
+/* 标的卡片 */
+.holding-card {
+    padding: 1.5rem;
+    border-radius: 1rem;
+    background: rgba(12, 18, 32, 0.5);
+    border: 1px solid var(--dram-border);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.holding-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--dram-cyan), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.holding-card:hover {
+    border-color: rgba(0, 240, 255, 0.25);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), 0 0 30px rgba(0, 240, 255, 0.06);
+}
+
+.holding-card:hover::before {
+    opacity: 1;
+}
+
+.holding-card .country-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--dram-muted);
+}
+
+/* 新闻卡片 */
+.news-card {
+    padding: 1.5rem;
+    border-radius: 1rem;
+    background: rgba(12, 18, 32, 0.5);
+    border: 1px solid var(--dram-border);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.news-card:hover {
+    border-color: rgba(0, 240, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.news-source {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--dram-cyan);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* 时间筛选按钮 */
+.time-filter {
+    transition: all 0.2s ease;
+}
+
+.time-filter.active,
+.time-filter:hover {
+    background: rgba(0, 240, 255, 0.2);
+    color: var(--dram-cyan);
+    border-color: rgba(0, 240, 255, 0.3);
+}
+
+/* 自定义滚动条 */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--dram-dark);
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(0, 240, 255, 0.2);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 240, 255, 0.4);
+}
+
+/* 动画 */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in {
+    animation: fadeInUp 0.6s ease forwards;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .font-display {
+        letter-spacing: -0.02em;
+    }
+}
