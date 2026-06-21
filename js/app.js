@@ -374,6 +374,58 @@ async function loadNews() {
     }
 }
 
+// 轻量级前端情感分析兜底（当后端未返回 sentiment 时使用）
+function computeSentimentFallback(title = '', summary = '') {
+    const text = `${title} ${summary}`;
+    const lower = text.toLowerCase();
+
+    const positive = [
+        '大涨','飙升','暴涨','翻倍','翻三倍','利好','强劲','超预期','创新高','历史新高',
+        '突破','上升','增长','复苏','需求旺盛','供不应求','产能售罄','上调','买入','增持',
+        '看好','领涨','领跑','激增','跳涨','走高','上行','上涨','受惠','受益','超级周期',
+        '重估','上行空间','涨势','升势','surge','soar','jump','rally','beat','strong',
+        'growth','outperform','bullish','upgrade','buy','record','booking','sold out',
+        'fully booked','boom','supercycle','upside','gains','rising','surges','soars'
+    ];
+    const negative = [
+        '大跌','暴跌','重挫','下挫','跳水','崩盘','腰斩','亏损','转亏','利空','跌破','下滑',
+        '下降','衰退','疲软','低迷','恶化','风险','担忧','恐慌','抛售','卖压','减持','卖出',
+        '下调','看空','看跌','唱衰','空头','熊市','跌幅','走低','下行','下跌','回落','不及预期',
+        ' miss','逊于预期','裁员','停产','供过于求','库存积压','价格战','产能过剩','延迟',
+        '推迟','取消','失败','plunge','crash','collapse','tumble','drop','fall','weak','miss',
+        'decline','bearish','downgrade','sell','loss','losses','losing','recession','oversupply',
+        'glut','downturn','slump','warning','layoffs'
+    ];
+
+    let score = 0;
+    let reasons = [];
+    positive.forEach(w => {
+        if (lower.includes(w.toLowerCase())) { score += 0.7; reasons.push(w); }
+    });
+    negative.forEach(w => {
+        if (lower.includes(w.toLowerCase())) { score -= 0.7; reasons.push(w); }
+    });
+
+    if (score > 0.25) return { sentiment: 'bullish', score: Math.min(1, score), reasons: reasons.slice(0,5) };
+    if (score < -0.25) return { sentiment: 'bearish', score: Math.max(-1, score), reasons: reasons.slice(0,5) };
+    return { sentiment: 'neutral', score: 0, reasons: [] };
+}
+
+function getSentimentBadge(item) {
+    const sentiment = item.sentiment || computeSentimentFallback(item.title, item.summary);
+    const labels = { bullish: '利好', bearish: '利空', neutral: '中性' };
+    const colors = {
+        bullish: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
+        bearish: 'bg-rose-500/15 text-rose-400 border-rose-500/30',
+        neutral: 'bg-slate-500/15 text-slate-400 border-slate-500/30'
+    };
+    const cls = colors[sentiment.sentiment] || colors.neutral;
+    const title = sentiment.reasons && sentiment.reasons.length
+        ? `触发词：${sentiment.reasons.join('、')}\n得分：${sentiment.score.toFixed(2)}`
+        : '情感得分：0（中性）';
+    return `<span class="px-2 py-0.5 rounded text-xs font-medium border ${cls}" title="${title.replace(/"/g, '&quot;')}">${labels[sentiment.sentiment] || '中性'}</span>`;
+}
+
 // 渲染新闻（按日期倒序排列）
 function renderNews() {
     const container = document.getElementById('news-grid');
@@ -388,11 +440,15 @@ function renderNews() {
             const name = getHoldingName(ticker);
             return `<span class="news-ticker" title="${name}">${ticker}</span>`;
         }).join('');
+        const sentimentBadge = getSentimentBadge(item);
         return `
         <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="news-card group block">
             <div class="flex items-center justify-between mb-3">
                 <span class="news-source">${item.source}</span>
-                <span class="text-xs text-dram-muted font-mono">${item.date}</span>
+                <div class="flex items-center gap-2">
+                    ${sentimentBadge}
+                    <span class="text-xs text-dram-muted font-mono">${item.date}</span>
+                </div>
             </div>
             <h3 class="font-display font-bold text-lg mb-2 group-hover:text-dram-cyan transition-colors">${item.title}</h3>
             <p class="text-dram-muted text-sm leading-relaxed mb-3">${item.summary}</p>

@@ -20,8 +20,10 @@ from config import (
 from fallback_client import fetch_quote, fetch_yahoo_kline
 from futu_client import FutuClient
 from k_skill_client import search_stock
-from models import QuoteBatchResponse, QuoteResponse, KlineResponse, NewsResponse, NewsItem
+from models import QuoteBatchResponse, QuoteResponse, KlineResponse, NewsResponse, NewsItem, NewsSentiment
 import news_client
+from sentiment_model import analyze_news
+from pydantic import BaseModel
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger(__name__)
@@ -276,6 +278,25 @@ async def get_kline(
     raise HTTPException(status_code=500, detail=f"无法获取 {code} 的 K 线数据")
 
 
+class SentimentAnalysisRequest(BaseModel):
+    title: str
+    summary: str = ""
+    tickers: list[str] = []
+
+
+class SentimentAnalysisResponse(BaseModel):
+    sentiment: str
+    score: float
+    reasons: list[str]
+
+
+@app.post("/api/analyze-sentiment", response_model=SentimentAnalysisResponse)
+async def analyze_sentiment(req: SentimentAnalysisRequest):
+    """分析给定资讯标题/摘要对标的的情感倾向（利好 / 利空 / 中性）。"""
+    result = analyze_news(title=req.title, summary=req.summary, tickers=req.tickers)
+    return SentimentAnalysisResponse(**result)
+
+
 @app.get("/api/news", response_model=NewsResponse)
 async def get_news():
     """动态获取 DRAM 持仓相关新闻（Naver 财经），并与静态 fallback 合并后返回。"""
@@ -288,10 +309,21 @@ async def get_news():
         )
     except Exception as e:
         logger.error(f"Failed to fetch news: {e}")
-        # 完全失败时返回静态 fallback
+        # 完全失败时返回静态 fallback，并附加情感分析
+        fallback = [
+            {
+                **item,
+                "sentiment": analyze_news(
+                    title=item.get("title", ""),
+                    summary=item.get("summary", ""),
+                    tickers=item.get("tickers", []),
+                ),
+            }
+            for item in news_client.STATIC_FALLBACK_NEWS
+        ]
         return NewsResponse(
             dynamic=False,
-            items=[NewsItem(**item) for item in news_client.STATIC_FALLBACK_NEWS],
+            items=[NewsItem(**item) for item in fallback],
             cached_at=None,
         )
 

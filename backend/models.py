@@ -33,6 +33,14 @@ class MarketStateResponse(BaseModel):
     state: str | None = None
 
 
+class NewsSentiment(BaseModel):
+    """单条资讯的情感分析结果。"""
+
+    sentiment: Literal["bullish", "bearish", "neutral"] = "neutral"
+    score: float = 0.0
+    reasons: list[str] = []
+
+
 class NewsItem(BaseModel):
     source: str
     date: str
@@ -40,6 +48,7 @@ class NewsItem(BaseModel):
     summary: str
     url: str
     tickers: list[str] = []
+    sentiment: NewsSentiment = NewsSentiment()
 
 
 class NewsResponse(BaseModel):

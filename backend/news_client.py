@@ -12,6 +12,7 @@ import urllib.request
 from datetime import datetime, timezone
 
 import sec_client
+from sentiment_model import analyze_news
 
 logger = logging.getLogger(__name__)
 
@@ -341,6 +342,14 @@ def fetch_merged_news(dynamic_display: int = 5, sec_display_per_ticker: int = 2)
         if url:
             seen.add(url)
         merged.append(item)
+
+    # 情感分析
+    for item in merged:
+        item["sentiment"] = analyze_news(
+            title=item.get("title", ""),
+            summary=item.get("summary", ""),
+            tickers=item.get("tickers", []),
+        )
 
     # 按日期倒序；没有具体月日的条目排在最后
     def _sort_key(x: dict) -> str:
