@@ -42,8 +42,22 @@ class AppState:
 state = AppState()
 
 
+def _port_open(host: str, port: int, timeout: float = 2.0) -> bool:
+    import socket
+    try:
+        with socket.create_connection((host, port), timeout=timeout):
+            return True
+    except OSError:
+        return False
+
+
 def _run_futu_loop():
     """在后台线程中运行富途行情循环：解析代码、订阅、轮询快照、推送。"""
+    if not _port_open(OPEND_HOST, OPEND_PORT):
+        state.connection_error = f"OpenD 未在 {OPEND_HOST}:{OPEND_PORT} 运行，请先启动 OpenD。"
+        state.connected = False
+        logger.error(state.connection_error)
+        return
     try:
         with FutuClient(OPEND_HOST, OPEND_PORT) as client:
             logger.info("Connected to OpenD, resolving codes...")
@@ -116,6 +130,21 @@ async def health():
         "error": state.connection_error,
         "resolved_codes": state.resolved_codes,
         "last_update": state.last_update,
+    }
+
+
+@app.get("/api/holdings")
+async def get_holdings():
+    """返回持仓列表，包含解析后的富途代码。"""
+    result = []
+    for h in HOLDINGS:
+        item = dict(h)
+        item["futu_code"] = state.resolved_codes.get(h["ticker"])
+        result.append(item)
+    return {
+        "connected": state.connected,
+        "etf_code": state.resolved_codes.get("DRAM"),
+        "holdings": result,
     }
 
 

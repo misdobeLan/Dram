@@ -8,8 +8,9 @@ const holdings = [
         weight: 28.2,
         description: '全球 HBM 与 DRAM 龙头，NVIDIA AI 芯片 HBM 核心供应商。',
         segment: 'HBM / DRAM',
-        change: 125.0,
-        color: '#00f0ff'
+        change: 0.0,
+        color: '#00f0ff',
+        futu_code: null
     },
     {
         rank: 2,
@@ -19,8 +20,9 @@ const holdings = [
         weight: 24.9,
         description: '美国最大记忆体制造商，覆盖 DRAM、NAND 与 HBM 产品线。',
         segment: 'DRAM / NAND / HBM',
-        change: 89.5,
-        color: '#2d7dff'
+        change: 0.0,
+        color: '#2d7dff',
+        futu_code: null
     },
     {
         rank: 3,
@@ -30,8 +32,9 @@ const holdings = [
         weight: 20.9,
         description: '全球最大记忆体厂商，积极推进 HBM4 与 NVIDIA 认证。',
         segment: 'DRAM / NAND / HBM',
-        change: 62.3,
-        color: '#00ff9d'
+        change: 0.0,
+        color: '#00ff9d',
+        futu_code: null
     },
     {
         rank: 4,
@@ -41,8 +44,9 @@ const holdings = [
         weight: 6.5,
         description: 'NAND 闪存巨头，由东芝记忆体业务重组而来。',
         segment: 'NAND Flash',
-        change: 48.7,
-        color: '#f59e0b'
+        change: 0.0,
+        color: '#f59e0b',
+        futu_code: null
     },
     {
         rank: 5,
@@ -52,8 +56,9 @@ const holdings = [
         weight: 5.1,
         description: '分拆自 Western Digital，专注 NAND 与消费级存储。',
         segment: 'NAND / SSD',
-        change: 94.2,
-        color: '#ff4d6d'
+        change: 0.0,
+        color: '#ff4d6d',
+        futu_code: null
     },
     {
         rank: 6,
@@ -63,8 +68,9 @@ const holdings = [
         weight: 4.4,
         description: '全球 HDD 龙头，积极布局 AI 数据中心海量冷存储。',
         segment: 'HDD',
-        change: 31.4,
-        color: '#a855f7'
+        change: 0.0,
+        color: '#a855f7',
+        futu_code: null
     },
     {
         rank: 7,
@@ -74,8 +80,9 @@ const holdings = [
         weight: 4.0,
         description: '硬盘与 NAND 存储解决方案供应商。',
         segment: 'HDD / NAND',
-        change: 26.8,
-        color: '#ec4899'
+        change: 0.0,
+        color: '#ec4899',
+        futu_code: null
     },
     {
         rank: 8,
@@ -85,8 +92,9 @@ const holdings = [
         weight: 3.3,
         description: '台湾 DRAM 制造商，专注利基型记忆体市场。',
         segment: 'DRAM',
-        change: 18.5,
-        color: '#14b8a6'
+        change: 0.0,
+        color: '#14b8a6',
+        futu_code: null
     },
     {
         rank: 9,
@@ -96,8 +104,9 @@ const holdings = [
         weight: 2.1,
         description: '利基型 DRAM、NOR Flash 与行动记忆体供应商。',
         segment: 'Specialty Memory',
-        change: 22.1,
-        color: '#6366f1'
+        change: 0.0,
+        color: '#6366f1',
+        futu_code: null
     }
 ];
 
@@ -132,8 +141,8 @@ const newsItems = [
     }
 ];
 
-// 模拟价格数据：2026-04-02 至 2026-06-19
-function generatePriceData() {
+// 备用模拟净值数据（当后端不可用时回退）
+function generateFallbackPriceData() {
     const startDate = new Date('2026-04-02');
     const endDate = new Date('2026-06-19');
     const dates = [];
@@ -157,7 +166,7 @@ function generatePriceData() {
 function renderHoldingsTable() {
     const tbody = document.getElementById('holdings-table-body');
     tbody.innerHTML = holdings.map(h => `
-        <tr class="holding-row">
+        <tr class="holding-row" data-ticker="${h.ticker}">
             <td class="py-4 px-6 text-dram-muted font-mono">${h.rank}</td>
             <td class="py-4 px-4">
                 <div class="holding-name">${h.name}</div>
@@ -174,7 +183,8 @@ function renderHoldingsTable() {
                 </div>
             </td>
             <td class="py-4 px-6 text-right">
-                <span class="font-mono font-bold text-dram-green">+${h.change.toFixed(1)}%</span>
+                <div class="font-mono font-bold rt-price">—</div>
+                <div class="font-mono font-bold text-sm rt-change">—</div>
             </td>
         </tr>
     `).join('');
@@ -184,7 +194,7 @@ function renderHoldingsTable() {
 function renderHoldingCards() {
     const container = document.getElementById('holding-cards');
     container.innerHTML = holdings.map(h => `
-        <div class="holding-card">
+        <div class="holding-card" data-card-ticker="${h.ticker}">
             <div class="flex items-start justify-between mb-4">
                 <div>
                     <h3 class="font-display font-bold text-xl">${h.name}</h3>
@@ -195,12 +205,12 @@ function renderHoldingCards() {
             <p class="text-dram-muted text-sm leading-relaxed mb-4">${h.description}</p>
             <div class="flex items-center justify-between pt-4 border-t border-white/10">
                 <div>
-                    <p class="text-xs text-dram-muted font-mono mb-1">WEIGHT</p>
-                    <p class="font-mono font-bold text-2xl" style="color: ${h.color}">${h.weight.toFixed(1)}%</p>
+                    <p class="text-xs text-dram-muted font-mono mb-1">PRICE</p>
+                    <p class="font-mono font-bold text-2xl rt-card-price" style="color: ${h.color}">—</p>
                 </div>
                 <div class="text-right">
-                    <p class="text-xs text-dram-muted font-mono mb-1">RETURN</p>
-                    <p class="font-mono font-bold text-dram-green">+${h.change.toFixed(1)}%</p>
+                    <p class="text-xs text-dram-muted font-mono mb-1">CHANGE</p>
+                    <p class="font-mono font-bold rt-card-change">—</p>
                 </div>
             </div>
         </div>
@@ -245,9 +255,7 @@ function initHoldingsChart() {
             maintainAspectRatio: true,
             cutout: '65%',
             plugins: {
-                legend: {
-                    display: false
-                },
+                legend: { display: false },
                 tooltip: {
                     backgroundColor: 'rgba(5, 7, 10, 0.9)',
                     titleColor: '#e8eef7',
@@ -267,7 +275,56 @@ function initHoldingsChart() {
 
 // 价格走势图
 let priceChart;
-const priceData = generatePriceData();
+let priceData = generateFallbackPriceData();
+
+async function loadHoldingsConfig() {
+    try {
+        const res = await fetch('/api/holdings');
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data.holdings) {
+            data.holdings.forEach(h => {
+                const local = holdings.find(lh => lh.ticker === h.ticker);
+                if (local) {
+                    local.futu_code = h.futu_code;
+                }
+            });
+        }
+        if (data.etf_code) {
+            const etfHolding = holdings.find(h => h.ticker === 'DRAM');
+            if (etfHolding) {
+                etfHolding.futu_code = data.etf_code;
+            } else {
+                holdings.unshift({
+                    rank: 0, name: 'Roundhill Memory ETF', ticker: 'DRAM',
+                    market: 'US', weight: 0, description: '', segment: 'ETF',
+                    change: 0, color: '#00f0ff', futu_code: data.etf_code
+                });
+            }
+        }
+    } catch (e) {
+        console.warn('Failed to load holdings config:', e);
+    }
+}
+
+async function loadRealPriceData() {
+    try {
+        const etfCode = holdings.find(h => h.ticker === 'DRAM')?.futu_code;
+        const code = etfCode || 'US.DRAM';
+        const res = await fetch(`/api/kline?code=${encodeURIComponent(code)}&ktype=1d&num=300`);
+        if (!res.ok) return false;
+        const data = await res.json();
+        if (!data.records || data.records.length === 0) return false;
+        priceData = {
+            dates: data.records.map(r => r.time_key.split(' ')[0]),
+            prices: data.records.map(r => r.close)
+        };
+        return true;
+    } catch (e) {
+        console.warn('Failed to load real kline data:', e);
+        return false;
+    }
+}
 
 function initPriceChart(range = 'all') {
     const ctx = document.getElementById('priceChart').getContext('2d');
@@ -313,10 +370,7 @@ function initPriceChart(range = 'all') {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            interaction: {
-                intersect: false,
-                mode: 'index'
-            },
+            interaction: { intersect: false, mode: 'index' },
             plugins: {
                 legend: { display: false },
                 tooltip: {
@@ -334,50 +388,16 @@ function initPriceChart(range = 'all') {
             },
             scales: {
                 x: {
-                    grid: {
-                        color: 'rgba(255, 255, 255, 0.05)',
-                        drawBorder: false
-                    },
-                    ticks: {
-                        color: '#8b9ab0',
-                        font: { family: 'JetBrains Mono', size: 10 },
-                        maxTicksLimit: 6
-                    }
+                    grid: { color: 'rgba(255, 255, 255, 0.05)', drawBorder: false },
+                    ticks: { color: '#8b9ab0', font: { family: 'JetBrains Mono', size: 10 }, maxTicksLimit: 6 }
                 },
                 y: {
-                    grid: {
-                        color: 'rgba(255, 255, 255, 0.05)',
-                        drawBorder: false
-                    },
-                    ticks: {
-                        color: '#8b9ab0',
-                        font: { family: 'JetBrains Mono', size: 10 },
-                        callback: function(value) {
-                            return '$' + value;
-                        }
-                    }
+                    grid: { color: 'rgba(255, 255, 255, 0.05)', drawBorder: false },
+                    ticks: { color: '#8b9ab0', font: { family: 'JetBrains Mono', size: 10 }, callback: function(value) { return '$' + value; } }
                 }
             }
         }
     });
-}
-
-// 模拟实时价格
-function simulateLivePrice() {
-    const priceEl = document.getElementById('etf-price');
-    const changeEl = document.getElementById('etf-change');
-    let basePrice = 47.85;
-    let baseChange = 3.24;
-
-    setInterval(() => {
-        const move = (Math.random() - 0.5) * 0.15;
-        basePrice = Math.max(basePrice + move, 40);
-        baseChange += move * 0.1;
-        
-        priceEl.textContent = `$${basePrice.toFixed(2)}`;
-        changeEl.textContent = `${baseChange >= 0 ? '+' : ''}${baseChange.toFixed(2)}%`;
-        changeEl.className = `px-2.5 py-1 rounded-lg font-mono font-bold text-sm ${baseChange >= 0 ? 'bg-dram-green/15 text-dram-green' : 'bg-dram-red/15 text-dram-red'}`;
-    }, 3500);
 }
 
 // 移动端菜单
@@ -433,15 +453,26 @@ function initScrollAnimations() {
     });
 }
 
+// 暴露 holdings 给 realtime.js
+window.holdings = holdings;
+
 // 初始化
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     renderHoldingsTable();
     renderHoldingCards();
     renderNews();
     initHoldingsChart();
+    
+    // 尝试加载真实 K 线，失败则回退到模拟数据
+    await loadRealPriceData();
     initPriceChart('all');
-    simulateLivePrice();
+    
     initMobileMenu();
     initTimeFilters();
     initScrollAnimations();
+
+    // 启动实时行情（若后端不可用，会自动降级并显示状态）
+    if (window.realtime && window.realtime.init) {
+        await window.realtime.init();
+    }
 });

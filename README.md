@@ -1,16 +1,85 @@
 # DRAM Tracker — Roundhill Memory ETF 监控台
 
-一个专注于美股 **DRAM ETF（Roundhill Memory ETF）** 的静态资讯网站，用于追踪 ETF 基本信息、核心持仓、权重分布、价格走势与市场资讯。
+一个专注于美股 **DRAM ETF（Roundhill Memory ETF）** 的监控网站，用于追踪 ETF 基本信息、核心持仓、权重分布、价格走势与市场资讯。
 
 ## 功能特性
 
 - **ETF 概览**：实时展示 DRAM 价格、AUM、费率、成立日期、管理风格等关键指标
 - **核心持仓**：9 大记忆体龙头持仓权重表格与可视化饼图
 - **标的详情**：SK Hynix、Micron、Samsung、Kioxia、SanDisk、Seagate 等公司卡片
-- **走势图表**：基于成立以来的模拟净值走势（支持 ALL / 1M / 2W 时间范围切换）
+- **走势图表**：基于真实 K 线的净值走势（支持 ALL / 1M / 2W 时间范围切换）
 - **市场资讯**：汇总 Morningstar、Barron's、AOL/Yahoo Finance 与官方报道
 - **响应式设计**：适配桌面端与移动端
-- **实时价格动画**：模拟盘中价格跳动效果
+- **实时行情**：通过富途 OpenAPI 接入真实行情数据
+
+## 快速开始
+
+### 1. 环境准备
+
+```bash
+cd d:/Dram
+python -m venv .venv
+.venv\Scripts\pip install -r backend/requirements.txt
+```
+
+### 2. 安装并启动 OpenD
+
+本项目的实时行情依赖富途 OpenD：
+
+1. 下载并安装 [富途 OpenD](https://www.futunn.com/OpenAPI)。
+2. 启动 OpenD GUI 并完成登录。
+
+或者运行检测脚本查看状态：
+
+```bash
+.venv\Scripts\python backend/opend_helper.py
+```
+
+### 3. 启动服务
+
+```bash
+start_server.bat
+```
+
+然后访问：http://localhost:8080
+
+### 4. 运行数据一致性测试
+
+```bash
+run_tests.bat
+```
+
+测试会自动比对页面展示数据与富途真实行情。若发现差异，会输出具体字段；你需要修正后重新运行，直到全部通过。
+
+## 项目结构
+
+```
+├── backend/           # FastAPI 行情代理后端
+│   ├── main.py
+│   ├── config.py
+│   ├── futu_client.py
+│   ├── models.py
+│   ├── opend_helper.py
+│   ├── check_futu.py
+│   └── requirements.txt
+├── tests/             # Playwright 数据一致性测试
+│   ├── conftest.py
+│   ├── test_api.py
+│   └── test_page_vs_real.py
+├── css/               # 样式
+├── js/                # 前端脚本
+│   ├── app.js
+│   └── realtime.js
+├── index.html         # 入口页面
+├── start_server.bat   # 一键启动脚本
+└── run_tests.bat      # 一键测试脚本
+```
+
+## 数据来源
+
+- 实时行情：[富途 OpenAPI](https://www.futunn.com/OpenAPI)
+- 持仓权重与 ETF 信息：[Roundhill Investments - DRAM](https://www.roundhillinvestments.com/etf/dram/)
+- 市场资讯：Morningstar、Barron's、AOL/Yahoo Finance 等公开财经媒体
 
 ## 持仓数据
 
@@ -27,30 +96,6 @@
 | 9 | Winbond Electronics | 2344.TW | Taiwan | 2.1% |
 
 > 权重数据综合自 Morningstar、Barron's 与公开报道，实际配置请以 Roundhill Investments 官方披露为准。
-
-## 本地运行
-
-本项目为纯静态网站，无需后端。
-
-```bash
-cd d:/Dram
-python -m http.server 8080
-```
-
-然后在浏览器打开：http://localhost:8080
-
-## 技术栈
-
-- HTML5 / CSS3
-- Tailwind CSS（CDN）
-- Chart.js（图表）
-- 原生 JavaScript
-- Google Fonts（Syne / JetBrains Mono / Noto Sans SC）
-
-## 数据来源
-
-- [Roundhill Investments - DRAM](https://www.roundhillinvestments.com/etf/dram/)
-- Morningstar、Barron's、AOL/Yahoo Finance 等公开财经媒体
 
 ## 免责声明
 
