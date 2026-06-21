@@ -59,3 +59,16 @@ def test_korean_search_endpoint(backend_server):
     assert data["count"] > 0
     codes = {item.get("code") for item in data["items"]}
     assert "005930" in codes
+
+
+def test_news_endpoint(backend_server):
+    """/api/news 应返回动态或静态 fallback 新闻列表。"""
+    data = _get_json(f"{backend_server}/api/news")
+    assert "dynamic" in data
+    assert "items" in data
+    assert len(data["items"]) > 0
+    for item in data["items"]:
+        assert "source" in item
+        assert "title" in item
+        assert "url" in item
+        assert "tickers" in item

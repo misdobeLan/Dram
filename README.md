@@ -8,7 +8,7 @@
 - **核心持仓**：9 大记忆体龙头持仓权重表格与可视化饼图
 - **标的详情**：SK Hynix、Micron、Samsung、Kioxia、SanDisk、Seagate 等公司卡片
 - **走势图表**：基于真实 K 线的净值走势（支持 ALL / 1M / 2W 时间范围切换）
-- **市场资讯**：汇总 Morningstar、Barron's、AOL/Yahoo Finance 与官方报道
+- **市场资讯**：后端动态拉取 Naver 财经（finance.naver.com）的韩国持仓（Samsung、SK hynix）最新要闻，并与其他持仓 curated 要闻合并展示；后端不可用时自动回退到静态列表
 - **响应式设计**：适配桌面端与移动端
 - **实时行情**：通过富途 OpenAPI + Yahoo Finance 回退接入真实行情数据，韩国股票额外集成 k-skill 作为辅助校验
 
@@ -151,7 +151,7 @@ pytest tests -v
 - 实时行情（韩股/台股）：[Yahoo Finance](https://finance.yahoo.com/)
 - 韩国股票代码/名称辅助校验：[k-skill-proxy](https://k-skill-proxy.nomadamas.org/v1/korean-stock)
 - 持仓权重与 ETF 信息：[Roundhill Investments - DRAM](https://www.roundhillinvestments.com/etf/dram/)
-- 市场资讯：Morningstar、Barron's、AOL/Yahoo Finance 等公开财经媒体
+- 市场资讯：Naver 财经（finance.naver.com，通过 k-skill-proxy 动态拉取 Samsung、SK hynix 中文报道）、Morningstar、Barron's、AOL/Yahoo Finance、TrendForce、Digital Today、Aju Press、Quiver Quantitative、01.co 等公开财经媒体
 
 ## 持仓数据
 

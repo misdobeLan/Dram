@@ -33,5 +33,20 @@ class MarketStateResponse(BaseModel):
     state: str | None = None
 
 
+class NewsItem(BaseModel):
+    source: str
+    date: str
+    title: str
+    summary: str
+    url: str
+    tickers: list[str] = []
+
+
+class NewsResponse(BaseModel):
+    dynamic: bool
+    items: list[NewsItem]
+    cached_at: float | None = None
+
+
 class ErrorResponse(BaseModel):
     detail: str

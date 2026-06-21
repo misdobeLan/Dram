@@ -256,6 +256,24 @@ tbody tr:hover {
     letter-spacing: 0.05em;
 }
 
+.news-ticker {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.625rem;
+    border-radius: 9999px;
+    background: rgba(0, 240, 255, 0.08);
+    border: 1px solid rgba(0, 240, 255, 0.2);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--dram-cyan);
+    transition: all 0.2s ease;
+}
+
+.news-card:hover .news-ticker {
+    background: rgba(0, 240, 255, 0.12);
+    border-color: rgba(0, 240, 255, 0.3);
+}
+
 /* 时间筛选按钮 */
 .time-filter {
     transition: all 0.2s ease;

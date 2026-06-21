@@ -20,7 +20,8 @@ from config import (
 from fallback_client import fetch_quote, fetch_yahoo_kline
 from futu_client import FutuClient
 from k_skill_client import search_stock
-from models import QuoteBatchResponse, QuoteResponse, KlineResponse
+from models import QuoteBatchResponse, QuoteResponse, KlineResponse, NewsResponse, NewsItem
+import news_client
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger(__name__)
@@ -273,6 +274,26 @@ async def get_kline(
         logger.warning(f"Yahoo kline failed for {code}: {e}")
 
     raise HTTPException(status_code=500, detail=f"无法获取 {code} 的 K 线数据")
+
+
+@app.get("/api/news", response_model=NewsResponse)
+async def get_news():
+    """动态获取 DRAM 持仓相关新闻（Naver 财经），并与静态 fallback 合并后返回。"""
+    try:
+        items, dynamic_ok = news_client.fetch_merged_news(dynamic_display=5)
+        return NewsResponse(
+            dynamic=dynamic_ok,
+            items=[NewsItem(**item) for item in items],
+            cached_at=time.time(),
+        )
+    except Exception as e:
+        logger.error(f"Failed to fetch news: {e}")
+        # 完全失败时返回静态 fallback
+        return NewsResponse(
+            dynamic=False,
+            items=[NewsItem(**item) for item in news_client.STATIC_FALLBACK_NEWS],
+            cached_at=None,
+        )
 
 
 @app.get("/api/korean/search")

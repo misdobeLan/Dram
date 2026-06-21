@@ -136,34 +136,142 @@ const holdings = [
     }
 ];
 
-const newsItems = [
+let newsItems = [
     {
         source: 'Morningstar',
         date: '2026-05-21',
-        title: 'Investors Are Flocking to This ETF, but Its Holdings Look Overvalued',
+        title: '投资者蜂拥而入这只 ETF，但持仓估值已偏高',
         summary: 'DRAM 在 45 天内资产规模突破近百亿美元，但 Morningstar 分析师认为主要持仓估值已偏高，且行业具备商品周期属性。',
-        url: 'https://www.morningstar.com/funds/memory-etf-has-been-hit-with-investors-they-shouldnt-forget-fundamentals'
+        url: 'https://www.morningstar.com/funds/memory-etf-has-been-hit-with-investors-they-shouldnt-forget-fundamentals',
+        tickers: ['DRAM']
     },
     {
         source: 'Barron\'s',
         date: '2026-05-15',
-        title: 'This Memory Chip ETF Is Off the Charts. The Chip Stock Boom Is Only Part of It.',
+        title: '这只记忆体芯片 ETF 涨势惊人，芯片股热潮只是部分原因',
         summary: 'DRAM 自上市以来上涨约 85%，资金流入与三大核心持仓（Micron、SK Hynix、Samsung）的强势表现共同推动。',
-        url: 'https://www.barrons.com/articles/memory-chip-stock-etf-sandisk-micron-a7f40b97'
+        url: 'https://www.barrons.com/articles/memory-chip-stock-etf-sandisk-micron-a7f40b97',
+        tickers: ['DRAM', 'MU', '000660.KS', '005930.KS']
     },
     {
         source: 'AOL / Yahoo Finance',
         date: '2026-05-26',
-        title: 'Scorching runs for memory chip stocks like Micron and Sandisk have sent this new ETF soaring',
+        title: 'Micron、Sandisk 等记忆体芯片股暴涨，推动这只新 ETF 飙升',
         summary: '记忆体芯片成为 AI 供应链最紧绷环节，DRAM 成为史上增长最快的 ETF 之一，30 个交易日内资产突破百亿美元。',
-        url: 'https://www.aol.com/articles/scorching-runs-memory-chip-stocks-135416000.html'
+        url: 'https://www.aol.com/articles/scorching-runs-memory-chip-stocks-135416000.html',
+        tickers: ['DRAM', 'MU', 'SNDK']
     },
     {
         source: 'Roundhill Investments',
         date: '2026',
-        title: 'Roundhill Memory ETF (DRAM) 官方介绍',
-        summary: '官方资料显示 DRAM 为主动管理型 ETF，通过股票与总收益互换投资全球记忆体公司，包括 HBM、DRAM、NAND、NOR、HDD 等。',
-        url: 'https://www.roundhillinvestments.com/etf/dram/'
+        title: 'Roundhill Memory ETF（DRAM）官方介绍',
+        summary: '官方资料显示 DRAM 为主动管理型 ETF，通过股票与总收益互换投资全球记忆体公司，覆盖 HBM、DRAM、NAND、NOR、HDD 等。',
+        url: 'https://www.roundhillinvestments.com/etf/dram/',
+        tickers: ['DRAM']
+    },
+    {
+        source: 'Quiver Quantitative / Globe Newswire',
+        date: '2026-06-01',
+        title: 'Micron 在 COMPUTEX 2026 展示 AI 优化记忆体与储存方案',
+        summary: 'Micron 展示完整 AI 记忆体与储存产品组合，包括 HBM4 36GB、256GB SOCAMM2 与数据中心 SSD，强调记忆体带宽与容量已成为系统效能核心。',
+        url: 'https://www.quiverquant.com/news/Micron+Technology+Showcases+AI-Optimized+Memory+and+Storage+Solutions+at+COMPUTEX+2026',
+        tickers: ['MU']
+    },
+    {
+        source: 'Aju Press',
+        date: '2026-06-19',
+        title: 'SK hynix 在 HPE Discover 2026 展示先进 AI 记忆体产品组合',
+        summary: 'SK hynix 展出 HBM4、HBM3E、DDR5 服务器记忆体与 CXL 记忆体模块，强化与 HPE 在全球 AI 基础设施领域的合作。',
+        url: 'https://m.ajupress.com/amp/20260619145938099',
+        tickers: ['000660.KS']
+    },
+    {
+        source: 'Digital Today',
+        date: '2026-02-12',
+        title: '三星电子开始 HBM4 量产出货，2026 年 HBM 销售额料将翻三倍',
+        summary: '三星电子率先开始 HBM4 量产出货，采用 1c DRAM 与 4nm 基础裸片，传输速度达 11.7Gbps，预计 2026 年 HBM 销售额将增长三倍以上。',
+        url: 'https://www.digitaltoday.co.kr/en/view/3806/samsung-electronics-begins-mass-production-shipments-of-hbm4-triples-hbm-sales-outlook',
+        tickers: ['005930.KS']
+    },
+    {
+        source: 'TrendForce',
+        date: '2026-02-13',
+        title: 'Kioxia 第三财季营收创纪录，确认 2026 年 NAND 产能售罄',
+        summary: 'Kioxia 财报创纪录，并确认 2026 年 NAND 产能已售罄；AI 需求推动数据中心 SSD 销售，与 SanDisk 的合资协议也延长至 2034 年。',
+        url: 'https://www.trendforce.com/news/2026/02/13/news-kioxia-posts-record-%C2%A5543-6b-q3-fy25-revenue-confirms-2026-nand-fully-booked',
+        tickers: ['285A / KI5.SG', 'SNDK']
+    },
+    {
+        source: 'AInvest',
+        date: '2026-01-16',
+        title: '把握 AI 驱动的记忆体与储存超级周期：SanDisk 与 Seagate',
+        summary: '分析指出 SanDisk 与 Seagate 是 AI 储存超级周期的关键受惠者：SanDisk 的 BiCS8 NAND 与数据中心 SSD 获 hyperscaler 认证，Seagate 的 HAMR 硬盘则承接海量冷储存需求。',
+        url: 'https://www.ainvest.com/news/capitalizing-ai-driven-memory-storage-supercycle-sandisk-seagate-2026-plays-2601',
+        tickers: ['SNDK', 'STX']
+    },
+    {
+        source: 'Futu / Zhitong Finance',
+        date: '2026-01-28',
+        title: 'Seagate 财报全面超预期，称 2026 年产能已售罄',
+        summary: 'Seagate 财报全面超预期，并透露 2026 年近线 HDD 产能已售罄；AI 数据中心对高容量硬盘的需求持续引爆「储存超级周期」。',
+        url: 'https://news.futunn.com/en/post/68002313/surging-hdd-demand-reinforces-storage-super-cycle-narrative-seagate-stxus',
+        tickers: ['STX', 'WDC']
+    },
+    {
+        source: 'Chief Group',
+        date: '2026-01-14',
+        title: 'AI 狂热持续，储存股升势能否持续？',
+        summary: 'SanDisk、Western Digital、Seagate、Micron 等美国数据储存相关股票在 2025–2026 年初大幅领涨，AI 数据爆炸式增长带动 NAND、企业级 SSD 与硬盘需求急增。',
+        url: 'https://www.chiefgroup.com.hk/en/financial/media?id=13481',
+        tickers: ['SNDK', 'WDC', 'STX', 'MU']
+    },
+    {
+        source: '01.co',
+        date: '2026-04-15',
+        title: '南亚科技 2026 年 Q1：利基型 DRAM 供应紧张确认，NAND 巨头入股锁定货源',
+        summary: '南亚科技 Q1 2026 营收同比增长 583%，毛利率跃升至 67.9%；SanDisk、SK hynix、Kioxia 等 NAND 大厂参与私募，锁定长期 DRAM 供应。',
+        url: 'https://www.01.co/research/nanya-tech-q1-2026-legacy-dram-squeeze',
+        tickers: ['2408.TW', 'SNDK', '000660.KS', '285A / KI5.SG']
+    },
+    {
+        source: 'TrendForce',
+        date: '2026-02-11',
+        title: '华邦电子预计 DRAM 价格到 2026 年 6 月将上涨近 4 倍，产能已预订至 2027 年',
+        summary: '华邦电子预期本季 DRAM 价格暴涨 90–95%，至 2026 年中累计涨幅接近 4 倍；2027 年 DRAM 产能已提前预售，资本支出创历史新高。',
+        url: 'https://www.trendforce.com/news/2026/02/11/news-winbond-expects-dram-prices-to-jump-nearly-4x-by-june-2026-capacity-booked-through-2027',
+        tickers: ['2344.TW']
+    },
+    {
+        source: 'TrendForce',
+        date: '2026-05-18',
+        title: '2026 年 Q1 记忆体价格飙升：三星 ASP 跳涨 146%，SK hynix DRAM 上涨逾 60%',
+        summary: '三星与 SK hynix 财报揭示 2026 年 Q1 记忆体价格飙升：三星记忆体 ASP 跳涨约 146%，SK hynix DRAM ASP 上涨 60% 中段，HBM4 与 DDR5 需求强劲。',
+        url: 'https://www.trendforce.com/news/2026/05/18/news-memory-supercycle-drives-1q26-price-surge-samsung-flags-146-asp-jump-sk-hynix-sees-mid-60-dram-gains',
+        tickers: ['005930.KS', '000660.KS']
+    },
+    {
+        source: 'Naver 财经 / Tokenpost',
+        date: '2026-06-21',
+        title: '【专栏】资金放水、AI 狂奔，只有比特币按兵不动',
+        summary: 'Naver 财经要闻：SK hynix 与 Samsung 已站上 AI 战争的核心供应链；AI 加速器没有韩国记忆体就无法正常运转，利川、清州、平泽、龙仁正成为华盛顿与北京科技博弈的重要变量。',
+        url: 'https://www.tokenpost.kr/news/insights/371485',
+        tickers: ['005930.KS', '000660.KS']
+    },
+    {
+        source: 'Naver 财经 / 韩国金融新闻',
+        date: '2026-06-21',
+        title: '金勇范：半导体繁荣果实不应流入房地产，应调整持有与转让税',
+        summary: 'Naver 财经要闻：全球 AI 投资爆发推高半导体需求，Samsung 与 SK hynix 营业利润暴增；政府正考虑调整持有税与转让税，防止半导体繁荣红利过度涌入房地产。',
+        url: 'http://www.fnnews.com/news/202606212114166178',
+        tickers: ['005930.KS', '000660.KS']
+    },
+    {
+        source: 'Naver 财经 / 京乡新闻',
+        date: '2026-06-21',
+        title: '录取线超越首尔大学自然科学系的「三电尼克斯」半导体合约学科',
+        summary: 'Naver 财经要闻：保证 Samsung 与 SK hynix 就业的「半导体合约学科」录取线已超越首尔大学自然科学系；AI 记忆体产业人才争夺战白热化，折射出「三电尼克斯」（Samsung + SK hynix）的市场地位。',
+        url: 'https://www.khan.co.kr/article/202606212113005',
+        tickers: ['005930.KS', '000660.KS']
     }
 ];
 
@@ -243,23 +351,58 @@ function renderHoldingCards() {
     `).join('');
 }
 
-// 渲染新闻
+// 将 ticker 映射为持仓显示名称
+function getHoldingName(ticker) {
+    if (ticker === 'DRAM') return 'DRAM ETF';
+    const h = holdings.find(h => h.ticker === ticker);
+    return h ? h.name : ticker;
+}
+
+// 从后端动态加载新闻，失败则保留静态兜底
+async function loadNews() {
+    try {
+        const res = await fetch('/api/news');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        if (data.items && data.items.length > 0) {
+            newsItems = data.items;
+            renderNews();
+            console.info(`News loaded: ${data.items.length} items (dynamic=${data.dynamic})`);
+        }
+    } catch (e) {
+        console.warn('Failed to load dynamic news, using fallback:', e);
+    }
+}
+
+// 渲染新闻（按日期倒序排列）
 function renderNews() {
     const container = document.getElementById('news-grid');
-    container.innerHTML = newsItems.map(item => `
+    const sortedNews = [...newsItems].sort((a, b) => {
+        // 没有具体月日的条目（如 '2026'）统一视为该年最早，排在最后
+        const da = a.date.length >= 7 ? a.date : `${a.date}-00-00`;
+        const db = b.date.length >= 7 ? b.date : `${b.date}-00-00`;
+        return db.localeCompare(da);
+    });
+    container.innerHTML = sortedNews.map(item => {
+        const tags = (item.tickers || []).map(ticker => {
+            const name = getHoldingName(ticker);
+            return `<span class="news-ticker" title="${name}">${ticker}</span>`;
+        }).join('');
+        return `
         <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="news-card group block">
             <div class="flex items-center justify-between mb-3">
                 <span class="news-source">${item.source}</span>
                 <span class="text-xs text-dram-muted font-mono">${item.date}</span>
             </div>
             <h3 class="font-display font-bold text-lg mb-2 group-hover:text-dram-cyan transition-colors">${item.title}</h3>
-            <p class="text-dram-muted text-sm leading-relaxed">${item.summary}</p>
-            <div class="mt-4 flex items-center text-dram-cyan text-sm font-medium">
+            <p class="text-dram-muted text-sm leading-relaxed mb-3">${item.summary}</p>
+            <div class="flex flex-wrap gap-2 mb-4">${tags}</div>
+            <div class="flex items-center text-dram-cyan text-sm font-medium">
                 阅读全文
                 <svg class="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
             </div>
         </a>
-    `).join('');
+    `}).join('');
 }
 
 // 初始化持仓饼图
@@ -489,6 +632,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderHoldingsTable();
     renderHoldingCards();
     renderNews();
+
+    // 尝试从后端动态加载最新资讯，失败则继续使用静态 curated 新闻
+    await loadNews();
+
     initHoldingsChart();
 
     // 先获取后端解析的富途代码映射
