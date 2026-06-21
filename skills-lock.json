@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "futuapi": {
+      "source": "futunnopen/futu-agent-hub",
+      "sourceType": "github",
+      "skillPath": "Futu API Skills/futuapi/SKILL.md",
+      "computedHash": "17a4e4bac4d8a3ed21fdf0f374deca008c2457948da739f31aec93a81dcd8ab5"
+    }
+  }
+}
