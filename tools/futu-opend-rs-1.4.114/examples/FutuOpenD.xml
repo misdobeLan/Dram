@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  FutuOpenD-rs 网关配置文件（兼容 C++ FutuOpenD.xml 格式）
+
+  用法：
+    1. 放在 futu-opend 同目录下，会自动检测并加载
+    2. 或通过 -\-cfg-file 指定路径：./futu-opend -\-cfg-file /etc/futu-opend/FutuOpenD.xml
+
+  注意：
+    - CLI 参数会覆盖配置文件中的同名字段
+    - 密码建议用环境变量（FUTU_PWD）或 EnvironmentFile 传入，不要写在配置文件里
+    - 此文件权限建议设为 0640（避免密码泄露）
+-->
+<futu_opend>
+    <!-- ========== 登录 ========== -->
+
+    <!-- 富途账号（手机号 / 邮箱） -->
+    <login_account></login_account>
+
+    <!-- 登录密码（明文，二选一） -->
+    <login_pwd></login_pwd>
+
+    <!-- 登录密码（MD5，二选一；用 md5 命令或在线工具计算） -->
+    <!-- <login_pwd_md5></login_pwd_md5> -->
+
+    <!-- 登录区域：cn（中国大陆）/ hk（香港）/ us（美国）-->
+    <login_region>hk</login_region>
+
+    <!-- ========== 服务端口 ========== -->
+
+    <!-- 监听 IP（默认 127.0.0.1，生产环境可改 0.0.0.0） -->
+    <ip>127.0.0.1</ip>
+
+    <!-- FTAPI TCP 端口（原生协议，Python/C++ SDK 连这个） -->
+    <port>11111</port>
+
+    <!-- REST API 端口（开启后同时提供 /health 健康检查） -->
+    <!-- <rest_port>22222</rest_port> -->
+
+    <!-- gRPC 端口 -->
+    <!-- <grpc_port>33333</grpc_port> -->
+
+    <!-- WebSocket 端口 -->
+    <!-- <websocket_port>44444</websocket_port> -->
+
+    <!-- Telnet 调试端口（仅开发调试用） -->
+    <!-- <telnet_port>55555</telnet_port> -->
+    <!-- Telnet 监听 IP 默认 127.0.0.1；远程调试需显式覆盖 -->
+    <!-- <telnet_ip>127.0.0.1</telnet_ip> -->
+
+    <!-- ========== 安全 ========== -->
+
+    <!-- RSA 私钥文件路径（协议加密用，不设则用默认内置密钥） -->
+    <!-- <rsa_private_key>/etc/futu-opend/rsa_key.pem</rsa_private_key> -->
+
+    <!-- ========== 日志 ========== -->
+
+    <!-- 日志级别：error / warn / info / debug / trace -->
+    <log_level>info</log_level>
+
+    <!-- 语言：sc（简体中文）/ tc（繁体）/ en（英文） -->
+    <lang>sc</lang>
+</futu_opend>

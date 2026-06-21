@@ -154,8 +154,34 @@
         }
     }
 
+    function markUnsupportedHoldings() {
+        if (!window.holdings) return;
+        window.holdings.forEach(h => {
+            if (h.ticker === 'DRAM') return;
+            if (!h.futu_code) {
+                // 表格
+                document.querySelectorAll(`[data-ticker="${h.ticker}"] .rt-price`).forEach(el => {
+                    el.textContent = '未开通';
+                    el.classList.add('text-dram-muted');
+                });
+                document.querySelectorAll(`[data-ticker="${h.ticker}"] .rt-change`).forEach(el => {
+                    el.textContent = '';
+                });
+                // 卡片
+                document.querySelectorAll(`[data-card-ticker="${h.ticker}"] .rt-card-price`).forEach(el => {
+                    el.textContent = '未开通';
+                    el.classList.add('text-dram-muted');
+                });
+                document.querySelectorAll(`[data-card-ticker="${h.ticker}"] .rt-card-change`).forEach(el => {
+                    el.textContent = '';
+                });
+            }
+        });
+    }
+
     async function init() {
         createStatusBadge();
+        markUnsupportedHoldings();
         const ok = await fetchInitialQuotes();
         if (ok) {
             connectWebSocket();

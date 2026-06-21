@@ -35,15 +35,20 @@ class FutuClient:
         self._ctx: OpenQuoteContext | None = None
         self._resolved_codes: dict[str, str] = {}
 
+    def __enter__(self):
+        self._ctx = OpenQuoteContext(host=self.host, port=self.port)
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if self._ctx:
+            self._ctx.close()
+            self._ctx = None
+        return False
+
     @contextmanager
     def context(self):
-        ctx = OpenQuoteContext(host=self.host, port=self.port)
-        try:
-            self._ctx = ctx
+        with self:
             yield self
-        finally:
-            ctx.close()
-            self._ctx = None
 
     def resolve_code(self, candidate_codes: list[str]) -> str | None:
         """从候选代码中返回第一个可用的富途代码。"""
@@ -116,7 +121,7 @@ class FutuClient:
         return quotes
 
     def get_kline(self, code: str, ktype: str = "K_DAY", num: int = 100) -> list[dict]:
-        """获取 K 线数据。"""
+        """获取 K 线数据。使用历史 K 线接口，无需订阅。"""
         if not self._ctx:
             raise RuntimeError("Quote context not initialized")
         kl_mapping = {
@@ -130,9 +135,18 @@ class FutuClient:
             "1M": KLType.K_MON,
         }
         kl = kl_mapping.get(ktype, KLType.K_DAY)
-        ret, data = self._ctx.get_cur_kl(code, kl, num)
+
+        # request_history_kline 同步返回数据（ret, data, page_req_key）
+        from datetime import datetime, timedelta
+        end = datetime.now().strftime("%Y-%m-%d")
+        start = (datetime.now() - timedelta(days=365)).strftime("%Y-%m-%d")
+
+        ret, data, page_req_key = self._ctx.request_history_kline(code, start=start, end=end, ktype=kl, max_count=num)
         if ret != 0:
-            raise RuntimeError(f"get_cur_kl failed: {ret}")
+            raise RuntimeError(f"request_history_kline failed: {ret}")
+        return self._dataframe_to_kline(data)
+
+    def _dataframe_to_kline(self, data) -> list[dict]:
         records = []
         for _, row in data.iterrows():
             records.append({

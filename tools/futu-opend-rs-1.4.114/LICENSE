@@ -1,0 +1,121 @@
+FutuOpenD-rs Proprietary License
+
+Copyright (c) 2026 leaf
+
+All rights reserved.
+
+================================================================================
+中文说明（Chinese Summary）
+
+本软件为专有免费软件。您可以免费使用（包括商业用途），但不得：
+  · 修改、反编译、逆向工程本软件
+  · 再分发、转售、出租本软件或其副本
+  · 移除或篡改版权声明
+
+本软件按"现状"提供，作者不对使用本软件产生的任何损失负责，包括但不限于
+交易损失、数据丢失、服务中断。您须自行承担所有交易决策的风险。
+
+以下英文条款具有法律效力。
+================================================================================
+
+
+1. GRANT OF USE
+
+Subject to the terms and conditions of this License, the copyright holder
+hereby grants you a non-exclusive, worldwide, royalty-free, non-transferable
+license to use, execute, and run the Software (in binary or source form) for
+any purpose, including personal and commercial use.
+
+
+2. RESTRICTIONS
+
+You may NOT:
+
+  (a) Modify, adapt, translate, port, reverse engineer, decompile, disassemble,
+      or create derivative works based upon the Software, except to the extent
+      such restrictions are expressly prohibited by applicable law.
+
+  (b) Redistribute, sublicense, lend, lease, sell, rent, host as a service,
+      or otherwise transfer the Software or any copies thereof to third parties.
+
+  (c) Remove, alter, or obscure any copyright notice, trademark, or other
+      proprietary notice contained in or on the Software.
+
+  (d) Use the name "Futu", the Futu logo, or any related trademarks in a manner
+      that could imply endorsement by, or official affiliation with, Futu
+      Holdings Limited or its subsidiaries, without express written permission.
+
+
+3. NO OFFICIAL AFFILIATION
+
+The Software is an independent Rust reimplementation of FutuOpenD. It is NOT
+an official product of Futu Holdings Limited or any of its subsidiaries. The
+copyright holder provides no official support, service level agreement, or
+guarantee of any kind.
+
+
+4. DISCLAIMER OF WARRANTY
+
+THE SOFTWARE IS PROVIDED "AS IS" AND "AS AVAILABLE", WITHOUT WARRANTY OF ANY
+KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, AND NON-INFRINGEMENT.
+THE COPYRIGHT HOLDER DOES NOT WARRANT THAT THE SOFTWARE WILL BE ERROR-FREE,
+UNINTERRUPTED, OR FREE OF HARMFUL COMPONENTS.
+
+
+5. LIMITATION OF LIABILITY
+
+IN NO EVENT SHALL THE COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES, OR
+OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE,
+ARISING FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+DEALINGS IN THE SOFTWARE.
+
+THIS INCLUDES, WITHOUT LIMITATION:
+
+  · Trading losses, missed trading opportunities, or financial damages
+  · Data loss, corruption, downtime, or service interruption
+  · Any indirect, incidental, special, consequential, or punitive damages
+  · Damages resulting from unauthorized access to your account or credentials
+
+
+6. TRADING RISK ACKNOWLEDGMENT
+
+Use of the Software involves financial trading activities that carry
+SIGNIFICANT AND SUBSTANTIAL RISK. You acknowledge and agree that:
+
+  (a) You are solely responsible for all trading decisions and outcomes.
+  (b) Past performance is no guarantee of future results.
+  (c) You may lose some or all of your invested capital.
+  (d) The copyright holder accepts NO responsibility for any trading losses,
+      errors in order execution, market data inaccuracies, or account issues
+      that may arise from using the Software.
+
+
+7. TERMINATION
+
+This License is effective until terminated. Your rights under this License
+will terminate automatically and without notice if you fail to comply with
+any term hereof. Upon termination you must cease all use of the Software and
+destroy all copies.
+
+
+8. GOVERNING LAW
+
+This License shall be governed by and construed in accordance with the laws
+of the People's Republic of China, without regard to its conflict of law
+provisions. Any disputes arising from or relating to this License shall be
+subject to the exclusive jurisdiction of the competent courts in China.
+
+
+9. SEVERABILITY
+
+If any provision of this License is held to be unenforceable or invalid, such
+provision shall be modified to the minimum extent necessary to make it
+enforceable, and the remaining provisions shall continue in full force.
+
+
+10. ENTIRE AGREEMENT
+
+This License constitutes the entire agreement between you and the copyright
+holder regarding the Software and supersedes all prior or contemporaneous
+understandings, whether written or oral.

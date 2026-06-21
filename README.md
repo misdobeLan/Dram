@@ -22,20 +22,39 @@ python -m venv .venv
 .venv\Scripts\pip install -r backend/requirements.txt
 ```
 
-### 2. 安装并启动 OpenD
+### 2. 启动 OpenD 网关
 
-本项目的实时行情依赖富途 OpenD：
+实时行情依赖本地 OpenD 网关（默认 `127.0.0.1:11111`）。
+
+#### 方式 A：使用项目内置网关（FUTU-OpenD-rs）
+
+由于当前网络环境无法直接从富途/moomoo 官网下载官方 OpenD，本项目已内置兼容的社区网关 [FUTU-OpenD-rs](https://futuapi.com/)。
+
+**离线模式（仅验证连接，无真实行情）：**
+
+```bash
+start_server.bat
+```
+
+**登录模式（获取真实行情）：**
+
+```bash
+set FUTU_ACCOUNT=你的富途账号
+set FUTU_PWD=你的登录密码
+start_opend_rs_login.bat
+```
+
+首次登录新设备可能需要输入短信验证码。登录成功后保持窗口运行，再启动后端。
+
+#### 方式 B：官方 OpenD（如果你能下载）
 
 1. 下载并安装 [富途 OpenD](https://www.futunn.com/OpenAPI)。
 2. 启动 OpenD GUI 并完成登录。
+3. 运行 `start_server.bat`。
 
-或者运行检测脚本查看状态：
+### 3. 启动后端与页面
 
-```bash
-.venv\Scripts\python backend/opend_helper.py
-```
-
-### 3. 启动服务
+如果已经手动启动了带登录的 OpenD，直接运行：
 
 ```bash
 start_server.bat
@@ -51,10 +70,43 @@ run_tests.bat
 
 测试会自动比对页面展示数据与富途真实行情。若发现差异，会输出具体字段；你需要修正后重新运行，直到全部通过。
 
+## 当前测试结果
+
+```bash
+pytest tests -v
+# 6 passed in ~14s
+```
+
+- ✅ `test_health`：后端健康检查
+- ✅ `test_holdings`：持仓代码映射
+- ✅ `test_quote_requires_connection`：行情接口
+- ✅ `test_kline_requires_connection`：K 线接口
+- ✅ `test_page_etf_price_matches_real`：页面 DRAM 价格/涨跌幅与真实行情一致
+- ✅ `test_page_holdings_match_real`：页面持仓价格/涨跌幅与真实行情一致
+
+## 实时行情覆盖范围
+
+当前 OpenD 账号可获取以下市场真实行情：
+
+| 公司 | 代码 | 市场 | 状态 |
+|------|------|------|------|
+| Roundhill Memory ETF | DRAM | US | ✅ 实时 |
+| Micron Technology | MU | US | ✅ 实时 |
+| SanDisk | SNDK | US | ✅ 实时 |
+| Seagate Technology | STX | US | ✅ 实时 |
+| Western Digital | WDC | US | ✅ 实时 |
+| SK Hynix | 000660.KS | Korea | ❌ 账号/市场不支持，显示 "—" |
+| Samsung Electronics | 005930.KS | Korea | ❌ 账号/市场不支持，显示 "—" |
+| Kioxia Holdings | 285A / KI5.SG | Japan / Singapore | ❌ 账号/市场不支持，显示 "—" |
+| Nanya Technology | 2408.TW | Taiwan | ❌ 账号/市场不支持，显示 "—" |
+| Winbond Electronics | 2344.TW | Taiwan | ❌ 账号/市场不支持，显示 "—" |
+
+> 若你的富途账号开通了韩股/台股/新加坡行情权限，修改 `backend/config.py` 中的 `futu_codes` 列表即可自动解析。
+
 ## 项目结构
 
 ```
-├── backend/           # FastAPI 行情代理后端
+├── backend/                  # FastAPI 行情代理后端
 │   ├── main.py
 │   ├── config.py
 │   ├── futu_client.py
@@ -62,17 +114,20 @@ run_tests.bat
 │   ├── opend_helper.py
 │   ├── check_futu.py
 │   └── requirements.txt
-├── tests/             # Playwright 数据一致性测试
+├── tests/                    # Playwright 数据一致性测试
 │   ├── conftest.py
 │   ├── test_api.py
 │   └── test_page_vs_real.py
-├── css/               # 样式
-├── js/                # 前端脚本
+├── tools/                    # 项目内置工具
+│   └── futu-opend-rs-*/      # FUTU-OpenD-rs 网关
+├── css/                      # 样式
+├── js/                       # 前端脚本
 │   ├── app.js
 │   └── realtime.js
-├── index.html         # 入口页面
-├── start_server.bat   # 一键启动脚本
-└── run_tests.bat      # 一键测试脚本
+├── index.html                # 入口页面
+├── start_server.bat          # 一键启动后端与页面
+├── start_opend_rs_login.bat  # 使用内置网关登录启动
+└── run_tests.bat             # 一键运行测试
 ```
 
 ## 数据来源

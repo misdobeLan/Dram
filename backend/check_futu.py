@@ -21,8 +21,8 @@ def main():
     print(f"DRAM ETF: {resolved.get('DRAM', '不可用')}")
     for h in HOLDINGS:
         code = resolved.get(h["ticker"], "不可用")
-        status = "✅" if code != "不可用" else "❌"
-        print(f"{status} {h['name']} ({h['ticker']}) -> {code}")
+        status = "OK" if code != "不可用" else "FAIL"
+        print(f"[{status}] {h['name']} ({h['ticker']}) -> {code}")
 
     if not resolved:
         print("\n警告：未解析到任何可用代码，请检查 OpenD 登录状态与行情权限。")
@@ -34,8 +34,10 @@ def main():
         codes = [c for c in resolved.values() if c]
         quotes = client.get_snapshot(codes)
         for q in quotes.values():
+            price = f"{q.price:.2f}" if q.price is not None else "N/A"
+            change = f"{q.change_pct:.2f}%" if q.change_pct is not None else "N/A"
             if q.valid:
-                print(f"{q.code}: price={q.price}, change_pct={q.change_pct:.2f}%")
+                print(f"{q.code}: price={price}, change_pct={change}")
             else:
                 print(f"{q.code}: error={q.error}")
 

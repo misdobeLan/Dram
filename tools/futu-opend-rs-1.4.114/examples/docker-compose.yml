@@ -1,0 +1,56 @@
+# FutuOpenD-rs Docker Compose 示例
+#
+# 启动：docker compose up -d
+# 日志：docker compose logs -f
+# 停止：docker compose down
+#
+# 前提：创建 .env 文件填入 FUTU_ACCOUNT 和 FUTU_PWD
+
+services:
+  futu-opend:
+    image: ghcr.io/futuleaf/futu-opend-rs:latest
+    container_name: futu-opend
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "11111:11111"   # FTAPI TCP（原生协议）
+      - "22222:22222"   # REST API + WebSocket
+      - "33333:33333"   # gRPC
+    volumes:
+      - ./keys.json:/etc/futu-opend/keys.json:ro
+      - futu-audit:/var/log/futu
+    command: >
+      futu-opend
+        --login-account ${FUTU_ACCOUNT}
+        --login-pwd ${FUTU_PWD}
+        --rest-port 22222
+        --grpc-port 33333
+        --rest-keys-file /etc/futu-opend/keys.json
+        --grpc-keys-file /etc/futu-opend/keys.json
+        --audit-log /var/log/futu/
+    healthcheck:
+      # /health 只证明进程 alive；compose service_healthy 要等 broker dispatch ready。
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:22222/readyz"]
+      interval: 30s
+      timeout: 3s
+      start_period: 15s
+
+  futu-mcp:
+    image: ghcr.io/futuleaf/futu-opend-rs:latest
+    container_name: futu-mcp
+    restart: unless-stopped
+    depends_on:
+      futu-opend:
+        condition: service_healthy
+    ports:
+      - "38765:38765"   # MCP HTTP transport
+    volumes:
+      - ./keys.json:/etc/futu-opend/keys.json:ro
+    command: >
+      futu-mcp
+        --gateway futu-opend:11111
+        --keys-file /etc/futu-opend/keys.json
+        --http-listen :38765
+
+volumes:
+  futu-audit:

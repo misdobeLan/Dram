@@ -462,11 +462,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderHoldingCards();
     renderNews();
     initHoldingsChart();
-    
+
+    // 先获取后端解析的富途代码映射
+    await loadHoldingsConfig();
+
     // 尝试加载真实 K 线，失败则回退到模拟数据
     await loadRealPriceData();
     initPriceChart('all');
-    
+
     initMobileMenu();
     initTimeFilters();
     initScrollAnimations();

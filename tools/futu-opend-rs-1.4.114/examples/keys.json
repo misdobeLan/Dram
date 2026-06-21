@@ -1,0 +1,18 @@
+[
+  {
+    "id": "my-trading-bot",
+    "hash": "sha256:用 futucli gen-key 生成，不要手写",
+    "scopes": ["qot:read", "acc:read", "trade:simulate"],
+    "note": "示例：只读行情 + 模拟交易",
+
+    "allowed_markets": ["HK", "US"],
+    "allowed_symbols": null,
+    "max_order_value": 100000.0,
+    "max_daily_value": 500000.0,
+    "hours_window": "09:00-16:30",
+    "max_orders_per_minute": 10,
+    "allowed_trd_sides": null,
+    "expires_at": null,
+    "allowed_machines": null
+  }
+]

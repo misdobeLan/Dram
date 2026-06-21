@@ -10,9 +10,8 @@ echo [1/3] 检查 OpenD...
 %PYTHON% backend\opend_helper.py
 if errorlevel 1 (
     echo.
-    echo 无法自动启动 OpenD。请按上述提示手动安装/启动后，再运行本脚本。
-    pause
-    exit /b 1
+    echo [提示] 未检测到可用的 OpenD。将尝试启动项目内置网关（离线模式）。
+    echo        如需获取真实行情，请先登录 OpenD。
 )
 
 echo.

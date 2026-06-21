@@ -68,6 +68,11 @@ def _run_futu_loop():
                 return
 
             state.resolved_codes = resolved
+            if not resolved:
+                state.connected = False
+                state.connection_error = "OpenD 已连接，但无法解析任何代码。可能未登录或行情权限不足。"
+                logger.error(state.connection_error)
+                return
             state.connected = True
             state.connection_error = None
             logger.info(f"Resolved codes: {resolved}")

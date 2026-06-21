@@ -1,0 +1,27 @@
+# futu-mcp 配置文件示例
+# 用法：futu-mcp --config futu-mcp.toml
+# CLI 参数始终覆盖配置文件中的值
+
+# 网关地址
+gateway = "127.0.0.1:11111"
+
+# API Key 授权
+# keys_file = "/etc/futu/keys.json"
+# api_key = "fc_xxxx..."   # 建议用 FUTU_MCP_API_KEY 环境变量替代
+
+# HTTP transport（不设则 stdio 模式）
+# http_listen = ":3000"
+
+# TLS（需同时设 cert 和 key）
+# tls_cert = "/etc/futu/cert.pem"
+# tls_key  = "/etc/futu/key.pem"
+
+# 审计日志
+# audit_log = "/var/log/futu-mcp-audit.jsonl"
+
+# 调试
+# verbose = true
+
+# 交易（仅 legacy 模式，有 keys_file 时忽略）
+# enable_trading = false
+# allow_real_trading = false

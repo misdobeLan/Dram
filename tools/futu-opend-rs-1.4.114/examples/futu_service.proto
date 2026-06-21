@@ -1,0 +1,72 @@
+syntax = "proto3";
+
+package futu.service;
+
+// ============================================================
+//  FutuOpenD gRPC Service
+//
+//  采用通用的 bytes 请求/响应格式，内部传递原始 protobuf body，
+//  复用 OpenD 现有的 RequestHandler 处理链。
+//  这样不需要在 gRPC proto 里重复定义所有 message 类型。
+// ============================================================
+
+// 通用请求：指定 proto_id + 原始 protobuf body
+message FutuRequest {
+  uint32 proto_id = 1;     // 协议 ID (如 3004=GetBasicQot)
+  bytes body = 2;          // protobuf 编码的请求 body (C2S)
+}
+
+// 通用响应：原始 protobuf body
+message FutuResponse {
+  int32 ret_type = 1;      // 0=成功, 其他=错误码
+  string ret_msg = 2;      // 错误信息
+  uint32 proto_id = 3;     // 对应的协议 ID
+  bytes body = 4;           // protobuf 编码的响应 body
+}
+
+// 推送事件
+message PushEvent {
+  uint32 proto_id = 1;     // 推送协议 ID
+  string sec_key = 2;      // 证券标识 (行情推送, 如 "1.00700")
+  int32 sub_type = 3;      // 订阅类型 (行情推送)
+  bytes body = 4;           // protobuf 编码的推送数据
+  string event_type = 5;   // 推送类型: "quote", "trade", "notify"
+  uint64 acc_id = 6;       // 交易账户 ID (交易推送)
+  // 交易推送的 trd_market 大写字符串:
+  // "HK"/"US"/"CN"/"HKCC"/"FUTURES"/"SG"/"CRYPTO"/"AU"/"JP"/"MY"/"CA",
+  // plus simulate-futures and read-only fund market labels when present.
+  // Empty string = non-trade event, decode failure, or unknown market enum.
+  string trd_market = 7;
+  // rehab_type: KL push carries the effective rehabilitation type; non-KL
+  // push uses 0. Clients can use (sec_key, sub_type, rehab_type) as a
+  // subscription key. Old clients stay compatible because proto3 defaults to 0.
+  int32 rehab_type = 8;
+}
+
+// 订阅推送请求
+message SubscribePushRequest {
+  // Explicit notify subscription opt-in.
+  //
+  // Broadcast push (for example price reminder updates) is delivered only to
+  // streams that explicitly opt in, matching native OpenD connection
+  // subscription semantics.
+  //
+  // - false (proto3 默认): 客户端只收 quote/trade 类 push, 不收 broadcast
+  //   notify 类 push (e.g. price reminder).
+  // - true: 客户端额外收 broadcast notify push.
+  //
+  // **Breaking change vs v1.4.105**: v1.4.105 之前 gRPC SubscribePush 默认
+  // 收所有 broadcast (含 price reminder), v1.4.106 起需 notify_subscribe=true
+  // 才能继续收. 老客户端如果依赖 price reminder push 必须传 true.
+  bool notify_subscribe = 1;
+}
+
+// ── 通用服务 ──
+// 单一 RPC 方法处理所有请求，通过 proto_id 区分
+service FutuOpenD {
+  // 通用请求-响应（覆盖所有行情/交易/系统接口）
+  rpc Request(FutuRequest) returns (FutuResponse);
+
+  // 流式推送（行情更新、订单更新等）
+  rpc SubscribePush(SubscribePushRequest) returns (stream PushEvent);
+}

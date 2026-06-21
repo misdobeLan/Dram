@@ -1,0 +1,49 @@
+[Unit]
+Description=FutuOpenD-rs MCP server (HTTP transport, multi-LLM)
+Documentation=https://www.futuapi.com/
+After=futu-opend.service network-online.target
+Wants=futu-opend.service network-online.target
+
+[Service]
+Type=simple
+User=futu
+Group=futu
+
+# stdio MCP 是 LLM 客户端启子进程，不需要 systemd unit；HTTP 模式才需要。
+# 这个 unit 假定你想跑 HTTP transport 给多 LLM 共用（v1.1+）。
+EnvironmentFile=/etc/futu-opend/env
+
+# FUTU_MCP_API_KEY 从 env 读（hide_env_values=true 不会进 ps）
+ExecStart=/usr/local/bin/futu-mcp \
+    --gateway 127.0.0.1:11111 \
+    --http-listen 127.0.0.1:38765 \
+    --keys-file /etc/futu-opend/keys.json \
+    --audit-log /var/log/futu/mcp/
+
+Restart=on-failure
+RestartSec=5s
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=futu-mcp
+
+# 加固（同 futu-opend）
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/var/log/futu /var/lib/futu
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+RestrictRealtime=true
+SystemCallArchitectures=native
+CapabilityBoundingSet=
+AmbientCapabilities=
+
+LimitNOFILE=65535
+
+[Install]
+WantedBy=multi-user.target

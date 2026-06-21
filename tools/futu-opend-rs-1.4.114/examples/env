@@ -1,0 +1,23 @@
+# futu-opend 环境变量文件
+# systemd: EnvironmentFile=/etc/futu-opend/env
+# Docker:  --env-file env
+# 权限建议: chmod 0640, root:futu
+
+# ========== 必填 ==========
+
+# 富途账号（手机号 / 邮箱）
+FUTU_ACCOUNT=你的富途账号
+
+# 登录密码（明文，systemd EnvironmentFile 不会进 ps 输出）
+FUTU_PWD=你的密码
+
+# ========== 可选 ==========
+
+# 交易密码（解锁交易用；或用 futucli set-trade-pwd 写 OS keychain）
+# FUTU_TRADE_PWD=你的交易密码
+
+# MCP server 的 API Key（HTTP 模式下 Authorization: Bearer 头的值）
+# FUTU_MCP_API_KEY=fc_xxxx...
+
+# 网关地址（futu-mcp 连接用，默认 127.0.0.1:11111）
+# FUTU_GATEWAY=127.0.0.1:11111

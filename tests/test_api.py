@@ -14,6 +14,16 @@ def test_health(backend_server):
     assert "resolved_codes" in data
 
 
+def test_holdings(backend_server):
+    data = _get_json(f"{backend_server}/api/holdings")
+    assert "holdings" in data
+    assert len(data["holdings"]) > 0
+    for h in data["holdings"]:
+        assert "ticker" in h
+        assert "weight" in h
+        assert "futu_code" in h
+
+
 def test_quote_requires_connection(backend_server):
     try:
         data = _get_json(f"{backend_server}/api/quote")
